@@ -41,6 +41,7 @@ npm run build    # production build in dist/
 | Space | Release from the B-52 |
 | I / O | Ignite / shut down the XLR99 |
 | R / F | Reaction controls / stability augmentation on-off |
+| L / K | Landing gear down · jettison ventral fin (both one-way, do both before landing) |
 | C | Camera: chase, cockpit, side |
 | G / J | Guide boxes on/off · switch guide profile (altitude / speed) |
 | T / P / N | Time scale, pause, new flight |

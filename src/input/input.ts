@@ -15,8 +15,8 @@ const COMMAND_KEYS: Record<string, Command> = {
   KeyO: 'shutdown',
   KeyR: 'toggleRcs',
   KeyF: 'toggleSas',
-  KeyG: 'gear',
-  KeyJ: 'jettison',
+  KeyL: 'gear',
+  KeyK: 'jettison',
   KeyN: 'reset',
 };
 
