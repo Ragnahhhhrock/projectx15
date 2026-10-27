@@ -31,14 +31,23 @@ A panel (bottom left) tracks two goals on every full flight from the B-52, with 
 
 `record_matched` fires to GA4 when a record is matched. Practice scenarios do not count.
 
-## Logbook
+## Collective flight stats
 
-A panel above the record challenge keeps the player's running totals, saved in the browser and updated as each flight ends (and across open tabs):
+The panel above the record challenge shows totals across **all players**, refreshed every minute and on each flight end:
 
 - **Flights** — counted once the X-15 leaves the B-52 (or a practice scenario starts free)
 - **Landings** — clean landings on the gear; belly landings are listed separately as damaged
 - **Crashes** — total, broken down by type: airframe overload, hard landing, sideways touchdown, off the lakebed, gear-up impact, ventral fin strike, flown into the ground
 - **Landed %** — clean landings per flight
+
+Stored in Cloudflare D1 behind a Pages Function (`functions/api/stats.ts`; `GET` returns totals, `POST {"event": …}` adds one). One-time setup:
+
+```bash
+npx wrangler d1 create projectx15-stats
+npx wrangler d1 execute projectx15-stats --remote --file migrations/0001_stats.sql
+```
+
+Then in the Cloudflare dashboard: Pages project → Settings → Bindings → add a D1 binding named `DB` pointing at `projectx15-stats`, and redeploy. Until then the panel shows "Loading flight totals…".
 
 ## Run it
 

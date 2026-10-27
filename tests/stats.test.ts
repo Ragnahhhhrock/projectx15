@@ -1,6 +1,7 @@
-// Logbook stats: crash reasons from the sim sort into the right type, and outcomes tally.
+// Collective stats: crash reasons sort into types, and counter rows roll up into totals.
 import { describe, expect, it } from 'vitest';
-import { crashType, emptyStats, record } from '../src/ui/stats';
+import { counterFor, crashType } from '../src/ui/stats';
+import { isCounter, totalsFrom } from '../src/stats-shared';
 
 const c = (crashReason: string, brokeUp = false) => crashType({ crashReason, brokeUp });
 
@@ -17,14 +18,25 @@ describe('crash types', () => {
   });
 });
 
-describe('tally', () => {
-  it('counts landings, belly landings and crashes by type', () => {
-    let s = emptyStats();
-    s = record(s, { kind: 'landed' });
-    s = record(s, { kind: 'belly' });
-    s = record(s, { kind: 'crash', type: 'hard_landing' });
-    s = record(s, { kind: 'crash', type: 'hard_landing' });
-    s = record(s, { kind: 'crash', type: 'structural' });
-    expect(s).toMatchObject({ landings: 1, bellyLandings: 1, crashes: 3, crashTypes: { hard_landing: 2, structural: 1 } });
+describe('counters', () => {
+  it('map outcomes to server counters the API accepts', () => {
+    expect(counterFor({ kind: 'landed' })).toBe('landings');
+    expect(counterFor({ kind: 'belly' })).toBe('belly_landings');
+    expect(counterFor({ kind: 'crash', type: 'hard_landing' })).toBe('crash:hard_landing');
+    expect(isCounter(counterFor({ kind: 'crash', type: 'off_lakebed' }))).toBe(true);
+    expect(isCounter('crash:made_up')).toBe(false);
+    expect(isCounter('DROP TABLE stats')).toBe(false);
+  });
+
+  it('roll up rows into totals', () => {
+    const t = totalsFrom([
+      { key: 'flights', n: 10 },
+      { key: 'landings', n: 4 },
+      { key: 'belly_landings', n: 1 },
+      { key: 'crash:hard_landing', n: 3 },
+      { key: 'crash:structural', n: 2 },
+      { key: 'junk', n: 99 },
+    ]);
+    expect(t).toEqual({ flights: 10, landings: 4, bellyLandings: 1, crashes: 5, crashTypes: { hard_landing: 3, structural: 2 } });
   });
 });
