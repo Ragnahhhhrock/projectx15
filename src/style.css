@@ -1,0 +1,67 @@
+:root {
+  --ink: #e9f3e4;
+  --dim: #8fa08a;
+  --panel: rgba(8, 12, 10, 0.62);
+  --accent: #9be38a;
+  font-family: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: var(--ink);
+}
+
+#view { display: block; width: 100vw; height: 100vh; }
+
+#hud {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  min-width: 300px;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid rgba(155, 227, 138, 0.25);
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.55;
+  pointer-events: none;
+}
+
+#hud div { display: flex; justify-content: space-between; gap: 16px; }
+#hud span { color: var(--dim); }
+#hud b { font-weight: 500; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+#status {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  background: var(--panel);
+  border-radius: 6px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  white-space: pre;
+  pointer-events: none;
+}
+
+#help {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  padding: 12px 16px;
+  background: var(--panel);
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+#help h2 { margin: 0 0 6px; font-size: 12px; letter-spacing: 0.1em; color: var(--accent); }
+#help table { border-collapse: collapse; }
+#help td { padding: 0 12px 0 0; }
+#help td:first-child { color: var(--dim); }

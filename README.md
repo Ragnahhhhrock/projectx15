@@ -6,4 +6,51 @@ A desktop browser flight simulator of the X-15 research flights: captive carry u
 - Contact: contact@projectx15.com
 - Plan: [docs/PLAN.md](docs/PLAN.md)
 
-Status: planning.
+## Status
+
+**M1 — physics core** (in progress). Flyable greybox build:
+
+- 6-DOF rigid body, fixed 120 Hz RK4 in a Web Worker, flat Earth with altitude-dependent gravity
+- US Standard Atmosphere 1976 (0–86 km) with an exponential tail above
+- XLR99: ignition delay, 50–100 % throttle, altitude-dependent thrust, ~88 s burn
+- H2O2 reaction controls, stability augmentation (pitch/roll/yaw dampers)
+- Aero coefficients by Mach in `src/data/x15-aero.json` — **approximate placeholders**, to be replaced with NASA data
+- Greybox X-15 and B-52, text HUD, chase / cockpit / side cameras
+
+Headless tests check the M1 gate against real profiles: an altitude flight peaking at 320,000–380,000 ft (cf. flight 91, 354,200 ft) and a speed flight reaching Mach 5.2–6.5.
+
+## Run it
+
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm test         # physics + profile tests
+npm run build    # production build in dist/
+```
+
+## Controls
+
+| Input | Action |
+| --- | --- |
+| W / S or ↑ / ↓ | Pitch (S = nose up) |
+| A / D or ← / → | Roll |
+| Q / E | Yaw |
+| X / Z | Throttle up / down |
+| Space | Release from the B-52 |
+| I / O | Ignite / shut down the XLR99 |
+| R / F | Reaction controls / stability augmentation on-off |
+| C | Camera: chase, cockpit, side |
+| T / P / N | Time scale, pause, new flight |
+| Gamepad | Sticks fly, triggers throttle, A ignite, Y release |
+
+## Layout
+
+```
+src/physics/   atmosphere, aircraft data, engine, 6-DOF sim, autopilot
+src/data/      aero coefficient tables (JSON)
+src/worker/    fixed-step physics loop and message protocol
+src/render/    Three.js scene (floating origin) and greybox models
+src/input/     keyboard + Gamepad API
+src/ui/        HUD
+tests/         unit tests and headless flight profiles
+```
