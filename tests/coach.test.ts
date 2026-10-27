@@ -67,7 +67,8 @@ describe('flight guide', () => {
     };
     expect(id(pickStep(new Sim().telemetry(), ctx, true))).toBe('welcome');
     expect(id(pickStep(new Sim().telemetry(), ctx, false))).toBe('drop');
-    expect(id(pickStep(at({ gear: true, h: 8, v: [100, -1.2, 0] }), ctx))).toBe('flare');
+    // ?scenario=landing still has the ventral fin on: jettison it first
+    expect(id(pickStep(at({ gear: true, h: 8, v: [100, -1.2, 0] }), ctx))).toBe('ventral');
     expect(id(pickStep(at({ gear: false, h: 8, v: [100, -1.2, 0] }), ctx))).toBe('ventral');
     expect(id(pickStep(at({ gear: false, h: 90000 - LAKE_ELEV, v: [1400, 0, 0], x: LAKE.x - 220000 }), ctx))).toBe('coast');
     expect(id(pickStep(at({ gear: false, h: 12000, v: [600, -100, 0], x: LAKE.x - 80000 }), ctx))).toBe('glide');
