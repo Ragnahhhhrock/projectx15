@@ -15,6 +15,12 @@ import { FlightAnalytics, track } from './analytics';
 import './styles/fonts';
 import './style.css';
 
+const coffee = document.getElementById('coffee');
+coffee?.addEventListener('click', () => {
+  track('buy_coffee_click', { amount: 5 });
+  coffee.blur(); // keep flight keys going to the sim, not the link
+});
+
 const TIMESCALES = [1, 2, 4, 8];
 
 const canvas = document.getElementById('view') as HTMLCanvasElement;
