@@ -5,6 +5,7 @@ import { GVision } from './ui/gvision';
 import { AudioEngine } from './audio/audio';
 import type { FromWorker, ToWorker } from './worker/protocol';
 import type { Telemetry } from './physics/sim';
+import { FlightAnalytics, track } from './analytics';
 import './styles/fonts';
 import './style.css';
 
@@ -25,6 +26,7 @@ const send = (msg: ToWorker) => worker.postMessage(msg);
 
 const params = new URLSearchParams(location.search);
 if (params.has('scenario')) send({ type: 'scenario', name: params.get('scenario')! });
+const analytics = new FlightAnalytics(params.get('scenario'));
 if (params.has('debug')) (window as unknown as { __x15: unknown }).__x15 = { view, send };
 
 let latest: Telemetry | null = null;
@@ -33,6 +35,7 @@ let timescale = 1;
 
 worker.onmessage = (e: MessageEvent<FromWorker>) => {
   latest = e.data.telemetry;
+  analytics.update(latest);
   paused = e.data.paused;
   timescale = e.data.timescale;
 };
@@ -48,7 +51,10 @@ function frame(now: number): void {
   const { commands, ui } = input.drainActions();
   for (const command of commands) send({ type: 'command', command });
   for (const action of ui) {
-    if (action === 'camera') view.mode = CAMERA_MODES[(CAMERA_MODES.indexOf(view.mode) + 1) % CAMERA_MODES.length];
+    if (action === 'camera') {
+      view.mode = CAMERA_MODES[(CAMERA_MODES.indexOf(view.mode) + 1) % CAMERA_MODES.length];
+      track('camera_change', { camera: view.mode });
+    }
     if (action === 'resetView') view.look.reset();
     if (action === 'guide') view.guide.toggle();
     if (action === 'guideProfile') { view.guide.cycleProfile(); view.guide.on || view.guide.toggle(); }

@@ -62,3 +62,18 @@ tests/         unit tests and headless flight profiles
 ## Practice scenarios
 
 Add `?scenario=landing`, `landing-gear-up`, `highalt` or `dive` to the URL to start somewhere other than the B-52. `M` mutes sound; `U` shows the text readout in the cockpit.
+
+## Analytics
+
+GA4 (`G-36Q83P4LEH`, via Google tag gateway on Cloudflare). Events are fired from telemetry changes in `src/analytics.ts`, once per flight:
+
+| Event | When | Key params |
+| --- | --- | --- |
+| `flight_start` | Page load or new flight (N) | `flight_number`, `scenario` |
+| `b52_release` | Drop from the B-52 | `altitude_ft`, `mach`, `flight_time_s` |
+| `engine_ignition` / `engine_shutdown` / `engine_burnout` | XLR99 state change | as above (+ `propellant_kg` on shutdown) |
+| `mach_milestone` | Mach 1–6 first reached | `milestone` |
+| `altitude_milestone` | 100k, 200k, 264k (astronaut wings), 300k, 350k ft | `milestone_ft` |
+| `gear_down`, `ventral_jettison` | Landing prep | as above |
+| `flight_end` | Landed or crashed | `outcome`, `max_mach`, `max_altitude_ft`, `max_g`, `crash_reason`, `touchdown_kt`, `sink_fps` |
+| `camera_change` | C key | `camera` |
