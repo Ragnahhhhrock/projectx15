@@ -1,6 +1,7 @@
 import { Input } from './input/input';
 import { CAMERA_MODES, SceneView } from './render/scene';
 import { Hud } from './ui/hud';
+import { GVision } from './ui/gvision';
 import type { FromWorker, ToWorker } from './worker/protocol';
 import type { Telemetry } from './physics/sim';
 import './styles/fonts';
@@ -12,6 +13,7 @@ const canvas = document.getElementById('view') as HTMLCanvasElement;
 const view = new SceneView(canvas);
 const hud = new Hud(document.getElementById('hud')!, document.getElementById('status')!);
 const help = document.getElementById('help')!;
+const gvision = new GVision(document.getElementById('gvision')!, canvas);
 const input = new Input();
 
 const worker = new Worker(new URL('./worker/physics.worker.ts', import.meta.url), { type: 'module' });
@@ -47,7 +49,8 @@ function frame(now: number): void {
 
   if (latest) {
     view.update(latest, dt);
-    hud.update(latest, { paused, timescale, camera: view.look.active ? `${view.mode} free look` : view.mode, guide: view.guide.on ? view.guide.profile : null });
+    gvision.update(latest.nz, latest.t);
+    hud.update(latest, { paused, timescale, camera: view.look.active ? `${view.mode} free look` : view.mode, guide: view.guide.on ? view.guide.profile : null, gwarn: gvision.label });
   }
   requestAnimationFrame(frame);
 }

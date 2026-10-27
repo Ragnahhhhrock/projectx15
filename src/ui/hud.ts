@@ -26,7 +26,7 @@ export class Hud {
     this.status = status;
   }
 
-  update(t: Telemetry, extra: { paused: boolean; timescale: number; camera: string; guide: string | null }): void {
+  update(t: Telemetry, extra: { paused: boolean; timescale: number; camera: string; guide: string | null; gwarn?: string | null }): void {
     const rows: [string, string][] = [
       ['MACH', fmt(t.mach, 2)],
       ['ALT', `${fmt(t.altitude * FT)} ft`],
@@ -46,7 +46,7 @@ export class Hud {
       ['MAX', `M${fmt(t.max.mach, 2)} · ${fmt(t.max.altitude * FT)} ft · ${fmt(t.max.nz, 1)} g`],
     ];
     this.el.innerHTML = rows.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('');
-    const flags = [extra.paused ? 'PAUSED' : '', extra.timescale !== 1 ? `${extra.timescale}×` : '', extra.camera.toUpperCase(), extra.guide ? `GUIDE ${extra.guide.toUpperCase()}` : ''].filter(Boolean);
+    const flags = [extra.gwarn ?? '', extra.paused ? 'PAUSED' : '', extra.timescale !== 1 ? `${extra.timescale}×` : '', extra.camera.toUpperCase(), extra.guide ? `GUIDE ${extra.guide.toUpperCase()}` : ''].filter(Boolean);
     this.status.textContent = `${phaseLabel(t)}   ${flags.join(' · ')}`;
   }
 }

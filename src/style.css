@@ -19,6 +19,19 @@ html, body {
 
 #view { display: block; width: 100vw; height: 100vh; }
 
+/* G-induced greyout / blackout: black tunnel closing in from the edges. */
+#gvision {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    linear-gradient(rgb(0 0 0 / var(--black, 0)), rgb(0 0 0 / var(--black, 0))),
+    radial-gradient(circle at center, transparent var(--tunnel, 85%), rgb(0 0 0 / var(--edge, 0)) calc(var(--tunnel, 85%) + 25%), #000 100%);
+}
+#gvision[hidden] { display: none; }
+#hud, #status, #help { z-index: 10; }
+
 /* ---- HUD ------------------------------------------------------------- */
 #hud {
   position: fixed;
