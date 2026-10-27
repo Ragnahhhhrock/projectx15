@@ -135,7 +135,7 @@ export class SceneView {
     this.cockpit.update(t, this.controls, dt, this.wall);
     this.effects.update(dt, t, att, this.x15);
 
-    this.guide.update(t.t);
+    this.guide.update(t);
     this.updateCamera(att, dt, t, pos);
 
     // Terrain, scenery and sky follow the camera (absolute world position)

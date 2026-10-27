@@ -1,7 +1,10 @@
 // Guide boxes along the ideal flight profile: rectangular frames standing across the reference
 // flight path, like the approach hoops in Fly Kai Tak. The reference paths are recorded from the
 // autopilot flights used by the profile tests (scripts/gen-profiles.ts -> src/data/profiles.json).
+// Those flights drop at t = 0 from the sim origin; in game the X-15 rides the B-52 first, so the gates
+// are shown only after release and are re-anchored to the actual drop point and time.
 import * as THREE from 'three';
+import type { Telemetry } from '../physics/sim';
 import profiles from '../data/profiles.json';
 
 export type ProfileName = 'altitude' | 'speed';
@@ -26,6 +29,8 @@ export class FlightGuide {
   private sets = new Map<ProfileName, Gate[]>();
   private current: ProfileName = 'altitude';
   private enabled = true;
+  private released = false;
+  private releaseT = 0;
 
   constructor() {
     for (const name of PROFILE_NAMES) {
@@ -52,18 +57,31 @@ export class FlightGuide {
   }
 
   /** Show only the active profile's gates still ahead of the aircraft; the next one lights up. */
-  update(flightTime: number): void {
+  update(t: Telemetry): void {
+    if (t.attached) {
+      if (this.released) { this.released = false; this.apply(); }
+      return;
+    }
+    if (!this.released) {
+      // Anchor the reference path (which starts at the sim's default drop point) to this drop.
+      this.released = true;
+      this.releaseT = t.t;
+      const o = profiles.altitude.pts[0];
+      this.group.position.set(t.position[0] - o[1], t.position[1] - o[2], t.position[2] - o[3]);
+      this.apply();
+    }
+    const flightTime = t.t - this.releaseT;
     const gates = this.sets.get(this.current)!;
     const next = gates.findIndex((g) => g.t >= flightTime);
     gates.forEach((g, i) => {
-      g.mesh.visible = this.enabled && g.t >= flightTime - PASSED_GRACE;
+      g.mesh.visible = this.enabled && this.released && g.t >= flightTime - PASSED_GRACE;
       (g.mesh.material as THREE.MeshBasicMaterial).color.copy(i === next ? NEXT : AHEAD);
       (g.mesh.material as THREE.MeshBasicMaterial).opacity = i === next ? 0.8 : 0.5;
     });
   }
 
   private apply(): void {
-    for (const [name, gates] of this.sets) for (const g of gates) g.mesh.visible = this.enabled && name === this.current;
+    for (const [name, gates] of this.sets) for (const g of gates) g.mesh.visible = this.enabled && this.released && name === this.current;
   }
 
   private build(pts: number[][]): Gate[] {
