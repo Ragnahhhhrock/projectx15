@@ -15,6 +15,8 @@ fs.mkdirSync(outDir, { recursive: true });
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
   page.on('pageerror', (e) => console.log('pageerror:', e.message));
   await page.addInitScript(() => {
+    const st = document.createElement('style'); st.textContent = '#stats,#corner,#coach,#help,#coffee,#home{display:none!important}';
+    document.addEventListener('DOMContentLoaded', () => document.head.appendChild(st));
     let now = 1000;
     performance.now = () => now;
     let queue = [];
@@ -24,7 +26,7 @@ fs.mkdirSync(outDir, { recursive: true });
     window.__feed = (tel) => window.__w && window.__w.onmessage && window.__w.onmessage({ data: { type: 'telemetry', telemetry: tel, paused: false, timescale: 1 } });
   });
   await page.addStyleTag({ content: '' }).catch(() => {});
-  await page.goto('http://127.0.0.1:5173/?scenario=demo', { waitUntil: 'load' });
+  await page.goto('http://127.0.0.1:4173/?scenario=demo', { waitUntil: 'load' });
   await page.addStyleTag({ content: '#stats,#corner,#coach,#help,#coffee,#home{display:none!important}' });
   await page.waitForFunction(() => window.__w && window.__w.onmessage, null, { timeout: 30000 });
   // warm up: a few frames so textures/terrain build before the first captured frame
