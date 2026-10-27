@@ -18,6 +18,7 @@ export class HomeScreen {
         <p class="x-label">Browser flight simulator</p>
         <h1 class="x-display">Project X-15</h1>
         <p class="home-sub">Drop from the B-52, light the XLR99, ride it to the edge of space and land on Rogers Dry Lake. Every flight is graded out of 1,000. The step-by-step flight guide coaches you all the way down; press <b>B</b> to show or hide it.</p>
+        <p class="home-more">New: read <a href="/history/">the history of the X-15 program</a> and its <a href="/history/timeline/">timeline</a>.</p>
         <h2 class="x-label">Top 10 pilots</h2>
         <div id="homeBoard" aria-live="polite"><p class="lb-empty">Loading…</p></div>
         <form id="homeForm" class="home-form">
@@ -28,6 +29,7 @@ export class HomeScreen {
       </div>`;
     this.q('homeForm').addEventListener('submit', (e) => { e.preventDefault(); this.start(); });
     void fetchBoard().then((b) => { this.q('homeBoard').innerHTML = renderBoard(b); });
+    this.sync();
   }
 
   get visible(): boolean { return !this.el.hidden; }
@@ -37,12 +39,16 @@ export class HomeScreen {
   private start(): void {
     saveName((this.q('homeName') as HTMLInputElement).value);
     this.el.hidden = true;
+    this.sync();
     track('home_start');
     this.onStart();
   }
 
-  show(): void { this.el.hidden = false; (this.q('homeName') as HTMLInputElement).focus(); }
-  hide(): void { this.el.hidden = true; }
+  show(): void { this.el.hidden = false; this.sync(); (this.q('homeName') as HTMLInputElement).focus(); }
+  hide(): void { this.el.hidden = true; this.sync(); }
+
+  /** body.on-home shows the history menu (#sitenav) only while this overlay is up. */
+  private sync(): void { document.body.classList.toggle('on-home', !this.el.hidden); }
 }
 
 /** Slides in when the flight ends; submits the score and shows the pilot's rank. */

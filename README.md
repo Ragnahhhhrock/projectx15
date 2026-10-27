@@ -112,6 +112,10 @@ A step-by-step coach for first-time pilots, modelled on the lessons in Fly Kai T
 
 Add `?scenario=landing`, `landing-gear-up`, `highalt` or `dive` to the URL to start somewhere other than the B-52. `M` mutes sound; `U` shows the text readout in the cockpit.
 
+## History pages (SEO)
+
+Static pages at `/history/` (overview, origins, aircraft, flight profile, pilots, records, accidents, legacy, timeline, FAQ) with a menu on the homepage. Content lives in `scripts/history/content.ts` (pages, timeline milestones, FAQ); `npm run gen-history` renders `history/**/index.html` and `public/sitemap.xml`. Commit the output: `tests/history.test.ts` fails if it is stale, and also checks titles, descriptions, canonical URLs, JSON-LD and internal links. Vite builds them as extra entry points. Bump `LASTMOD` when content changes.
+
 ## Analytics
 
 GA4 (`G-36Q83P4LEH`, via Google tag gateway on Cloudflare). Events are fired from telemetry changes in `src/analytics.ts`, once per flight:
@@ -126,5 +130,6 @@ GA4 (`G-36Q83P4LEH`, via Google tag gateway on Cloudflare). Events are fired fro
 | `gear_down`, `ventral_jettison` | Landing prep | as above |
 | `flight_end` | Landed or crashed | `outcome`, `max_mach`, `max_altitude_ft`, `max_g`, `crash_reason`, `touchdown_kt`, `sink_fps` |
 | `camera_change` | C key | `camera` |
+| `history_menu_click` | Homepage history menu link | `page` |
 | `record_matched` | Altitude or speed record matched | `record`, `value` |
 | `guide_start` / `guide_step` / `guide_complete` / `guide_skip` / `guide_crash` | Flight guide progress | `step`, `index`, `reason` |

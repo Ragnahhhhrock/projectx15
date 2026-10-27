@@ -11,6 +11,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "gen-profiles": "vite-node scripts/gen-profiles.ts",
+    "gen-history": "vite-node scripts/gen-history.ts",
     "brand": "python3 scripts/render-brand.py"
   },
   "dependencies": {

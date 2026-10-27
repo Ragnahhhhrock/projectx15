@@ -23,6 +23,11 @@ coffee?.addEventListener('click', () => {
   coffee.blur(); // keep flight keys going to the sim, not the link
 });
 
+document.getElementById('sitenav')?.addEventListener('click', (e) => {
+  const link = (e.target as HTMLElement).closest('a');
+  if (link) track('history_menu_click', { page: new URL(link.href).pathname });
+});
+
 const TIMESCALES = [1, 2, 4, 8];
 
 const canvas = document.getElementById('view') as HTMLCanvasElement;
