@@ -8,7 +8,7 @@ import { atmosphere, gravity, G0 } from './atmosphere';
 import { CONTACT_POINTS, FRICTION, LANDING, SPRINGS, STRUCTURE, type ContactPoint } from './contact';
 import { Engine, type EngineState } from './engine';
 import { add, clamp, cross, dot, len, norm, qmul, qnormalize, rotate, rotateInv, scale, sub, type Quat, type V3 } from './math';
-import { TERRAIN_MAX, terrainHeight, terrainSlope } from '../world/terrain';
+import { DROP, TERRAIN_MAX, terrainHeight, terrainSlope } from '../world/terrain';
 
 /** Pilot (or autopilot) inputs. Axes are -1..1. */
 export interface Controls {
@@ -132,6 +132,9 @@ const ZERO_INPUTS: StepInputs = {
   de: 0, da: 0, dr: 0, thrust: 0, mdotMain: 0, rcsTorque: [0, 0, 0], mdotRcs: 0, gear: false, ventral: true, terrain: FLAT,
 };
 
+/** Newtonian lift scale (2 for a flat plate) */
+const NEWTONIAN = 2;
+
 export const pointActive = (cp: ContactPoint, gear: boolean, ventral: boolean): boolean =>
   cp.needs === 'always' || (cp.needs === 'gear' && gear) || (cp.needs === 'noGear' && !gear) || (cp.needs === 'ventral' && ventral);
 
@@ -166,8 +169,12 @@ export function derivative(s: Float64Array, u: StepInputs, out: Float64Array): A
     const pr = w[0], yr = -w[1], qr = w[2]; // roll right, yaw right, pitch up
 
     const finFactor = u.ventral ? 1 : 0.8; // losing the ventral costs directional stability
-    const CL = k.CLa * a + k.CLde * u.de;
-    const CD = k.CD0 + (u.gear ? 0.02 : 0) + k.K * CL * CL + 0.5 * beta * beta;
+    // Hypersonic crossflow (Newtonian) lift and drag at high alpha, which the linear tables miss.
+    // It is what lets the X-15 pull out of a steep re-entry at 20-25° alpha.
+    const nl = clamp((mach - 1.5) / 2.5, 0, 1);
+    const sa = Math.sin(a);
+    const CL = k.CLa * a + k.CLde * u.de + nl * NEWTONIAN * sa * Math.abs(sa) * Math.cos(a);
+    const CD = k.CD0 + (u.gear ? 0.02 : 0) + k.K * (k.CLa * a + k.CLde * u.de) ** 2 + nl * NEWTONIAN * Math.abs(sa) ** 3 + 0.5 * beta * beta;
     const CY = k.CYb * beta * finFactor + k.CYdr * u.dr;
     const Cl = k.Clb * beta + k.Clda * u.da + (k.Clp * pr * b) / (2 * V);
     const Cm = k.Cma * a + k.Cmde * u.de + (k.Cmq * qr * c) / (2 * V);
@@ -253,8 +260,8 @@ export function derivative(s: Float64Array, u: StepInputs, out: Float64Array): A
 }
 
 export const DEFAULT_CONFIG: SimConfig = {
-  position: [0, 13716, 0], // 45,000 ft
-  velocity: [236, 0, 0], // ~Mach 0.8
+  position: [DROP.x, DROP.altitude, DROP.z], // the ideal release point, 45,000 ft
+  velocity: [DROP.speed, 0, 0], // ~Mach 0.8
   attitude: [1, 0, 0, 0],
   attached: true,
   terrain: (x, z) => terrainHeight(x, z),

@@ -5,6 +5,7 @@ import type { Telemetry } from '../physics/sim';
 import type { ProfileName } from '../render/guide';
 import { LAKE } from '../world/terrain';
 import { warnings } from './warnings';
+import { PRE_DROP_S, fmtCountdown, timeToDrop } from '../physics/mission';
 import { track } from '../analytics';
 
 const FT = 3.28084;
@@ -91,12 +92,16 @@ export const STEPS: Step[] = [
     manual: 'Start the guide',
     body: (_t, c) =>
       `You are hanging under the right wing of the NB-52 at <b>45,000 ft</b>, Mach 0.8. An X-15 flight is: <b>drop</b>, <b>light the rocket</b>, <b>pull up</b>, <b>coast over the top</b>, <b>re-enter</b>, <b>glide to Rogers Dry Lake</b>, <b>land</b>. ` +
-      `Fly through the magenta boxes; the next one is yellow. This guide flies the <b>${c.profile}</b> profile (${k('J')} to switch).`,
+      `The boxes ahead show the ideal flight: the B-52's track to the <b>orange drop box</b>, the climb in <b>magenta</b>, then re-entry and landing in <b>blue</b>; the next box is yellow. This guide flies the <b>${c.profile}</b> profile (${k('J')} to switch).`,
   },
   {
     id: 'drop',
     title: 'Drop from the B-52',
-    body: () => `Press ${k('Space')} to release. The X-15 falls away nose-down for a moment. That is normal.`,
+    body: (t) => {
+      const s = t ? timeToDrop(t) : PRE_DROP_S;
+      const when = s > 0 ? `The release call comes in <b>${fmtCountdown(s)} s</b>, at the orange box.` : '<b>Release now!</b>';
+      return `${when} Press ${k('Space')} on the call to start the profile on the boxes. The X-15 falls away nose-down for a moment. That is normal.`;
+    },
     done: (t) => !t.attached,
   },
   {

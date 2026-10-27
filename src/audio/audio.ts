@@ -1,6 +1,7 @@
 // Procedural sound: everything is synthesised with WebAudio from telemetry, no sample files.
 import type { Telemetry } from '../physics/sim';
 import { warnings } from '../ui/warnings';
+import { timeToDrop } from '../physics/mission';
 
 const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
 
@@ -154,6 +155,21 @@ export class AudioEngine {
     o.stop(ctx.currentTime + dur + 0.05);
   }
 
+  /** Short sine pip for the release countdown. */
+  private pip(freq: number, dur: number, gain: number): void {
+    const ctx = this.ctx!;
+    const o = ctx.createOscillator();
+    o.frequency.value = freq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(gain, ctx.currentTime + 0.01);
+    g.gain.setValueAtTime(gain, ctx.currentTime + dur - 0.03);
+    g.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+    o.connect(g).connect(this.master);
+    o.start();
+    o.stop(ctx.currentTime + dur + 0.05);
+  }
+
   update(t: Telemetry, dt: number, inCockpit: boolean, b52Distance: number): void {
     const ctx = this.ctx;
     if (!ctx) return;
@@ -165,6 +181,11 @@ export class AudioEngine {
 
     // Events
     if (p && t.t >= p.t) {
+      // Release countdown: pips at T-5..T-1, a long tone at the release point
+      if (p.attached && t.attached) {
+        const a = Math.ceil(timeToDrop(p)), b = Math.ceil(timeToDrop(t));
+        if (b < a && b >= 0 && b <= 5) b === 0 ? this.pip(1320, 0.9, 0.22) : this.pip(880, 0.12, 0.18);
+      }
       if (p.attached && !t.attached) { this.thump(120, 38, 0.35, 0.8); this.burst(0.15, 3000, 800, 0.5, 'bandpass'); }
       if (p.engine === 'off' && t.engine === 'igniting') { this.burst(0.7, 400, 2500, 0.6, 'bandpass'); this.thump(60, 40, 0.8, 0.5); }
       if (p.engine !== 'off' && t.engine === 'off') { this.burst(1.2, 1800, 120, 0.6); }

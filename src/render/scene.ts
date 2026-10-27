@@ -10,7 +10,7 @@ import { Ground, Vegetation } from './ground';
 import { Sky, SUN_DIR } from './sky';
 import { Cockpit, EYE } from './cockpit';
 import { Effects } from './effects';
-import { terrainHeight } from '../world/terrain';
+import { DROP, terrainHeight } from '../world/terrain';
 
 /** 'pilot' is the cockpit eye point with no airframe or cockpit drawn: a clear view out. */
 export type CameraMode = 'chase' | 'cockpit' | 'pilot' | 'side';
@@ -123,7 +123,7 @@ export class SceneView {
       this.b52.position.copy(B52_OFFSET).applyQuaternion(att).add(pos);
       this.b52.quaternion.copy(att);
     } else {
-      if (!this.b52Release) this.b52Release = { pos: this.b52.position.clone(), t: t.t, vel: new THREE.Vector3(236, 0, 0) };
+      if (!this.b52Release) this.b52Release = { pos: this.b52.position.clone(), t: t.t, vel: new THREE.Vector3(DROP.speed, 0, 0) };
       const r = this.b52Release;
       this.b52.position.copy(r.vel).multiplyScalar(t.t - r.t).add(r.pos);
     }

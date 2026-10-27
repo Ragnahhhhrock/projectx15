@@ -5,6 +5,7 @@ import { atmosphere, gravity, G0, R_EARTH } from '../src/physics/atmosphere';
 import { MASS } from '../src/physics/aircraft';
 import { qaxis, qnormalize } from '../src/physics/math';
 import { DT } from './fly';
+import { DROP } from '../src/world/terrain';
 
 describe('XLR99 engine', () => {
   it('lights after the ignition delay and gains thrust with altitude', () => {
@@ -90,7 +91,7 @@ describe('6-DOF integrator', () => {
     const t = sim.telemetry();
     expect(t.attached).toBe(true);
     expect(t.altitude).toBeCloseTo(13716, 6);
-    expect(t.position[0]).toBeCloseTo(236 * 5, 3);
+    expect(t.position[0] - DROP.x).toBeCloseTo(236 * 5, 3);
     sim.release();
     for (let i = 0; i < 120 * 3; i++) sim.step(DT);
     expect(sim.telemetry().altitude).toBeLessThan(13716);

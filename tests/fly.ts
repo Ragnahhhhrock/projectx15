@@ -15,7 +15,7 @@ export interface FlightLog {
  * Drop from the B-52, light the engine one second later, and fly with the given
  * autopilot until the predicate says stop (or the time limit).
  */
-export function fly(autopilot: (t: Telemetry) => Controls, stop: (t: Telemetry) => boolean, limit = 900): FlightLog {
+export function fly(autopilot: (t: Telemetry, sim: Sim) => Controls, stop: (t: Telemetry) => boolean, limit = 900): FlightLog {
   const sim = new Sim();
   sim.release();
   const samples: Telemetry[] = [];
@@ -24,7 +24,7 @@ export function fly(autopilot: (t: Telemetry) => Controls, stop: (t: Telemetry) 
   let t = sim.telemetry();
   while (t.t < limit) {
     if (t.t >= 1 && sim.engine.state === 'off') sim.engine.ignite();
-    sim.controls = autopilot(t);
+    sim.controls = autopilot(t, sim);
     sim.step(DT);
     t = sim.telemetry();
     if (!burnout && t.engine === 'burnout') burnout = t;

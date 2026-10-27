@@ -2,6 +2,7 @@
 import { Sim } from '../physics/sim';
 import { qaxis } from '../physics/math';
 import { LAKE, LAKE_ELEV } from '../world/terrain';
+import { GAME_START } from '../physics/mission';
 import type { FromWorker, ToWorker } from './protocol';
 
 const DT = 1 / 120;
@@ -23,11 +24,14 @@ function scenario(name: string): Sim {
     case 'landing-gear-up': return coast([LAKE.x - 3000, LAKE_ELEV + 8, LAKE.z], [100, -1.2, 0], 8, false);
     case 'highalt': return coast([LAKE.x - 220000, 90000, LAKE.z + 4000], [1400, 0, 0], 2, false);
     case 'dive': return coast([LAKE.x - 4000, LAKE_ELEV + 1500, LAKE.z], [250, -150, 0], -31, false);
-    default: return new Sim();
+    default: return newFlight();
   }
 }
 
-let sim = new Sim();
+/** A full flight: on the B-52, a minute and a half before the release point. */
+const newFlight = () => new Sim({ position: [...GAME_START] });
+
+let sim = newFlight();
 let paused = false;
 let timescale = 1;
 let acc = 0;
@@ -65,7 +69,7 @@ self.onmessage = (e: MessageEvent<ToWorker>) => {
         sim.jettisonVentral();
         break;
       case 'reset':
-        sim = new Sim();
+        sim = newFlight();
         acc = 0;
         break;
       case 'pause':

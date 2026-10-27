@@ -30,7 +30,7 @@ html, body {
     radial-gradient(circle at center, transparent var(--tunnel, 85%), rgb(0 0 0 / var(--edge, 0)) calc(var(--tunnel, 85%) + 25%), #000 100%);
 }
 #gvision[hidden] { display: none; }
-#hud, #status, #help, #coach, #records { z-index: 10; }
+#hud, #status, #help, #coach, #records, #dropcue { z-index: 10; }
 
 /* ---- HUD ------------------------------------------------------------- */
 #hud {
@@ -364,3 +364,29 @@ body.replaying #help, body.replaying #coach { display: none; }
 #records .rec.locked { opacity: 0.55; }
 #records .rec-flash { margin: 0; padding: 4px 6px; color: var(--action-text); background: var(--action); border-radius: 2px; font-weight: 600; letter-spacing: 0.04em; }
 body.replaying #records { display: none; }
+
+/* Release call-out under the status bar */
+#dropcue {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-2) var(--space-5);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font: 700 var(--fs-lg) / 1.1 var(--font-display);
+  letter-spacing: var(--track-display);
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  white-space: nowrap;
+  pointer-events: none;
+}
+#dropcue[hidden] { display: none; }
+#dropcue[data-state='countdown'] { font-size: var(--fs-md); color: var(--text-dim); }
+#dropcue[data-state='final'] { color: var(--data); border-color: var(--data); }
+#dropcue[data-state='now'] { color: var(--action-text); background: var(--action); border-color: var(--action); box-shadow: 0 0 24px rgba(255, 106, 26, 0.55); font-size: var(--fs-xl); }
+#dropcue[data-state='late'] { color: var(--x15-caution); border-color: var(--x15-caution); font-size: var(--fs-xl); }
+#dropcue[data-state='verdict'] { font-size: var(--fs-md); color: var(--data); }
+body.replaying #dropcue { display: none; }

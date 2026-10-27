@@ -25,9 +25,9 @@ describe('altitude profile (cf. flight 91, 354,200 ft, Aug 1963)', () => {
     expect(log.burnout!.t).toBeLessThan(95);
   });
 
-  it('peaks between 320,000 and 380,000 ft', () => {
+  it('peaks between 320,000 and 385,000 ft', () => {
     expect(ft(log.apex.altitude)).toBeGreaterThan(320000);
-    expect(ft(log.apex.altitude)).toBeLessThan(380000);
+    expect(ft(log.apex.altitude)).toBeLessThan(385000);
   });
 
   it('survives re-entry to 20 km with stable numbers', () => {

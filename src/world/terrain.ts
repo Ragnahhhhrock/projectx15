@@ -1,9 +1,13 @@
 // World layout and terrain height. +x = east (downrange), +y = up, +z = south.
-// Rogers Dry Lake and the airbase sit 360 km downrange of the launch point.
+// Rogers Dry Lake and the airbase sit 510 km downrange of the drop point, about as far as the real
+// high-altitude flights launched from Edwards (flight 91 dropped over Smith Ranch Lake, Nevada).
 import { fbm, mix, ridged, smoothstep } from './noise';
 
 export const LAKE_ELEV = 700; // m MSL, Rogers Dry Lake is ~2,300 ft
 export const TERRAIN_MAX = 3300; // m, anything above this cannot be touched
+
+/** Ideal B-52 release point for both mission profiles: 45,000 ft, Mach 0.8, heading east. */
+export const DROP = { x: -150000, z: 0, altitude: 13716, speed: 236 };
 
 export const LAKE = {
   x: 360000,

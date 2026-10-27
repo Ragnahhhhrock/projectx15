@@ -7,6 +7,7 @@ import { Pfd } from './ui/pfd';
 import { FlightRecorder } from './replay/recorder';
 import { ReplayPlayer } from './replay/player';
 import { Records } from './ui/records';
+import { DropCue } from './ui/dropcue';
 import { AudioEngine } from './audio/audio';
 import type { FromWorker, ToWorker } from './worker/protocol';
 import type { Telemetry } from './physics/sim';
@@ -27,6 +28,7 @@ const audio = new AudioEngine();
 const hudEl = document.getElementById('hud')!;
 let hudForced = false;
 const pfd = new Pfd(document.getElementById('pfd')!);
+const dropCue = new DropCue(document.getElementById('dropcue')!);
 const recorder = new FlightRecorder();
 const replay = new ReplayPlayer(recorder, document.getElementById('replay')!);
 /** Whether the sim was running when the replay started, so it resumes afterwards */
@@ -124,6 +126,7 @@ function frame(now: number): void {
     coach.setProfile(view.guide.profile);
     if (!replay.active) coach.update(shown, now);
     if (!replay.active && latest) records.update(latest, now);
+    if (!replay.active && latest) dropCue.update(latest);
     gvision.update(shown.nz, shown.t);
     audio.update(shown, dt, isEyeView(view.mode), view.b52Distance);
     hudEl.style.display = view.mode === 'cockpit' && !hudForced ? 'none' : '';

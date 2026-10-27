@@ -10,7 +10,7 @@ const fmt = (n: number, d = 0) => n.toLocaleString('en-US', { minimumFractionDig
 function phaseLabel(t: Telemetry): string {
   if (t.crashed) return `${t.brokeUp ? 'AIRFRAME FAILURE' : 'CRASHED'}${t.crashReason ? ` — ${t.crashReason.toUpperCase()}` : ''} — N TO RESET`;
   if (t.landed) return t.damaged ? 'LANDED — AIRCRAFT DAMAGED — N TO RESET' : 'LANDED — N TO RESET';
-  if (t.attached) return 'CAPTIVE CARRY — SPACE TO RELEASE';
+  if (t.attached) return 'CAPTIVE CARRY — RELEASE AT THE CALL (SPACE)';
   if (t.engine === 'igniting') return 'IGNITION';
   if (t.engine === 'running') return 'POWERED';
   if (t.engine === 'off' && t.t < 60) return 'RELEASED — I TO IGNITE';
