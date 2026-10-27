@@ -132,11 +132,11 @@ export const STEPS: Step[] = [
     body: (_t, c) =>
       c.profile === 'altitude'
         ? `Hold the nose at <b>54°</b> with small taps of ${k('W')} and ${k('S')}, wings level. The rocket burns for about <b>85 seconds</b> and takes you past Mach 5.`
-        : `As you pass <b>90,000 ft</b>, ease the nose down with ${k('W')} until you stop climbing, then hold it there. Every bit of thrust now goes into speed. Aim for <b>Mach 5.5</b> or more at burnout.`,
+        : `As you pass <b>82,000 ft</b>, ease the nose down with ${k('W')} into a shallow climb of about <b>3°</b> and hold it. Every bit of thrust now goes into speed. Bob White's record is <b>Mach 6.04</b>.`,
     meter: (c) =>
       c.profile === 'altitude'
         ? { label: 'Propellant', get: (t) => (t.mainProp / PROP_FULL) * 100, min: 0, max: 100, fmt: (v) => `${Math.round(v)}%` }
-        : { label: 'Mach', get: (t) => t.mach, min: 0, max: 7, zone: [5.2, 7], fmt: (v) => v.toFixed(2) },
+        : { label: 'Mach', get: (t) => t.mach, min: 0, max: 7, zone: [6.04, 7], fmt: (v) => v.toFixed(2) },
     done: (t) => engineOut(t),
     warn: (t, c) => {
       const w = common(t) || wingsWarn(t, 20);
@@ -147,8 +147,8 @@ export const STEPS: Step[] = [
         if (pitch < 46) return `Nose too low: ${pitch.toFixed(0)}°. Tap ${k('S')} to bring it back to 54°.`;
         if (pitch > 62) return `Nose too high: ${pitch.toFixed(0)}°. Tap ${k('W')} to bring it back to 54°.`;
       } else {
-        if (alt > 85_000 && t.verticalSpeed * FT * 60 > 8_000) return `Still climbing fast. Ease the nose down with ${k('W')}.`;
-        if (alt < 80_000 && t.verticalSpeed < -20) return `Descending into thick air. Raise the nose a little with ${k('S')}.`;
+        if (alt > 85_000 && t.verticalSpeed * FT * 60 > 25_000) return `Still climbing fast. Ease the nose down with ${k('W')}.`;
+        if (alt < 75_000 && t.verticalSpeed < -20) return `Descending into thick air. Raise the nose a little with ${k('S')}.`;
       }
       return '';
     },

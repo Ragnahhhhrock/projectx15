@@ -1,9 +1,9 @@
 {
-  "_note": "Approximate placeholder coefficients for the X-15 (A-1/A-3), per radian, by Mach. Shaped from general published trends; to be replaced with values from NASA X-15 wind-tunnel and flight-test reports.",
+  "_note": "Approximate placeholder coefficients (CD0 tuned Oct 2026 against the Mach 6.04 record) for the X-15 (A-1/A-3), per radian, by Mach. Shaped from general published trends; to be replaced with values from NASA X-15 wind-tunnel and flight-test reports.",
   "mach": [0.3, 0.8, 1.0, 1.2, 2.0, 3.0, 4.0, 6.0, 8.0],
   "CLa":  [3.5, 3.9, 4.2, 3.6, 2.4, 1.7, 1.35, 1.0, 0.9],
   "CLde": [0.45, 0.5, 0.55, 0.45, 0.3, 0.22, 0.18, 0.14, 0.12],
-  "CD0":  [0.065, 0.075, 0.13, 0.12, 0.09, 0.075, 0.065, 0.055, 0.05],
+  "CD0":  [0.06, 0.065, 0.10, 0.09, 0.065, 0.052, 0.046, 0.04, 0.038],
   "K":    [0.15, 0.17, 0.22, 0.3, 0.4, 0.5, 0.6, 0.8, 0.9],
   "Cma":  [-0.5, -0.6, -0.9, -1.0, -0.8, -0.6, -0.5, -0.4, -0.35],
   "Cmde": [-1.0, -1.1, -1.2, -1.0, -0.7, -0.5, -0.4, -0.3, -0.25],

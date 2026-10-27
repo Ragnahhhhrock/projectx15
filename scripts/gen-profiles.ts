@@ -6,6 +6,8 @@ import { controls, holdAlpha, holdGamma, holdPitch } from '../src/physics/autopi
 
 const deg = Math.PI / 180;
 const STEP_S = 4; // one guide sample every 4 s of flight
+/** Speed profile: ease over into a 3° climb above this altitude, m (82,000 ft) */
+const SPEED_LEVEL_M = 25000;
 
 function altitude() {
   let phase: 'boost' | 'coast' | 'entry' = 'boost';
@@ -24,8 +26,8 @@ function speed() {
   let level = false;
   return fly(
     (t) => {
-      if (t.altitude > 30000) level = true;
-      return controls(level ? holdGamma(t, 0) : holdPitch(t, 25 * deg), t);
+      if (t.altitude > SPEED_LEVEL_M) level = true;
+      return controls(level ? holdGamma(t, 3 * deg) : holdPitch(t, 25 * deg), t);
     },
     (t) => t.engine === 'burnout' && t.t > 90,
   );

@@ -28,8 +28,8 @@ export const XLR99 = {
   thrustVac: 253500,
   /** Effective nozzle exit area for the pressure term, m² (gives ~50,000 lbf at sea level) */
   exitArea: 0.307,
-  /** Effective specific impulse incl. turbopump propellant, s */
-  isp: 253,
+  /** Effective specific impulse incl. turbopump propellant, s (tuned so a well-flown speed profile can just reach Mach 6.04) */
+  isp: 258,
   minThrottle: 0.5,
   /** Ignition-to-thrust delay, s */
   ignitionDelay: 0.8,

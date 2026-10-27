@@ -6,6 +6,7 @@ import { Coach } from './ui/coach';
 import { Pfd } from './ui/pfd';
 import { FlightRecorder } from './replay/recorder';
 import { ReplayPlayer } from './replay/player';
+import { Records } from './ui/records';
 import { AudioEngine } from './audio/audio';
 import type { FromWorker, ToWorker } from './worker/protocol';
 import type { Telemetry } from './physics/sim';
@@ -38,6 +39,7 @@ coach.onNewFlight = () => send({ type: 'command', command: 'reset' });
 const params = new URLSearchParams(location.search);
 if (params.has('scenario')) send({ type: 'scenario', name: params.get('scenario')! });
 const analytics = new FlightAnalytics(params.get('scenario'));
+const records = new Records(document.getElementById('records')!, !params.has('scenario'));
 if (params.has('debug')) (window as unknown as { __x15: unknown }).__x15 = { view, send };
 
 let latest: Telemetry | null = null;
@@ -121,6 +123,7 @@ function frame(now: number): void {
     view.update(shown, dt);
     coach.setProfile(view.guide.profile);
     if (!replay.active) coach.update(shown, now);
+    if (!replay.active && latest) records.update(latest, now);
     gvision.update(shown.nz, shown.t);
     audio.update(shown, dt, isEyeView(view.mode), view.b52Distance);
     hudEl.style.display = view.mode === 'cockpit' && !hudForced ? 'none' : '';

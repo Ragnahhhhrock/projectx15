@@ -21,6 +21,16 @@ Magenta guide boxes (toggle with G, switch profile with J) mark the ideal flight
 
 Headless tests check the M1 gate against real profiles: an altitude flight peaking at 320,000–380,000 ft (cf. flight 91, 354,200 ft) and a speed flight reaching Mach 5.2–6.5.
 
+## Record challenge
+
+A panel (bottom left) tracks two goals on every full flight from the B-52, with best-ever marks saved in the browser:
+
+- **Altitude — 354,200 ft** (Joe Walker, flight 91, 22 Aug 1963). Fly the altitude profile.
+- **Speed — Mach 6.04** (Bob White, 9 Nov 1961, the standard X-15's best). Fly the speed profile: pull up to 25°, ease into a 3° climb at 82,000 ft, full throttle to burnout. A near-perfect flight only just makes it.
+- **Mach 6.70** (Pete Knight, flight 188, 3 Oct 1967) is shown locked: it needs the X-15A-2 with drop tanks.
+
+`record_matched` fires to GA4 when a record is matched. Practice scenarios do not count.
+
 ## Run it
 
 ```bash
@@ -83,4 +93,5 @@ GA4 (`G-36Q83P4LEH`, via Google tag gateway on Cloudflare). Events are fired fro
 | `gear_down`, `ventral_jettison` | Landing prep | as above |
 | `flight_end` | Landed or crashed | `outcome`, `max_mach`, `max_altitude_ft`, `max_g`, `crash_reason`, `touchdown_kt`, `sink_fps` |
 | `camera_change` | C key | `camera` |
+| `record_matched` | Altitude or speed record matched | `record`, `value` |
 | `guide_start` / `guide_step` / `guide_complete` / `guide_skip` / `guide_crash` | Flight guide progress | `step`, `index`, `reason` |
