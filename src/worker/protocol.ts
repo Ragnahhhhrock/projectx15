@@ -1,6 +1,6 @@
 import type { Controls, Telemetry } from '../physics/sim';
 
-export type Command = 'release' | 'ignite' | 'shutdown' | 'toggleRcs' | 'toggleSas' | 'reset' | 'pause' | 'resume';
+export type Command = 'release' | 'ignite' | 'shutdown' | 'toggleRcs' | 'toggleSas' | 'gear' | 'jettison' | 'reset' | 'pause' | 'resume';
 
 export type ToWorker =
   | { type: 'controls'; controls: Controls }

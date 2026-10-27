@@ -15,6 +15,8 @@ const COMMAND_KEYS: Record<string, Command> = {
   KeyO: 'shutdown',
   KeyR: 'toggleRcs',
   KeyF: 'toggleSas',
+  KeyG: 'gear',
+  KeyJ: 'jettison',
   KeyN: 'reset',
 };
 
@@ -29,7 +31,7 @@ const UI_KEYS: Record<string, UiAction> = {
 };
 
 // Standard-mapping gamepad buttons
-const PAD_COMMANDS: Record<number, Command> = { 0: 'ignite', 3: 'release', 2: 'toggleRcs', 8: 'reset' };
+const PAD_COMMANDS: Record<number, Command> = { 0: 'ignite', 3: 'release', 2: 'toggleRcs', 4: 'jettison', 5: 'gear', 8: 'reset' };
 const PAD_UI: Record<number, UiAction> = { 1: 'camera', 9: 'pause' };
 
 export class Input {

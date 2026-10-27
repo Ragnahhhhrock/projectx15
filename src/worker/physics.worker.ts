@@ -34,6 +34,12 @@ self.onmessage = (e: MessageEvent<ToWorker>) => {
       case 'toggleSas':
         sim.sasOn = !sim.sasOn;
         break;
+      case 'gear':
+        sim.deployGear();
+        break;
+      case 'jettison':
+        sim.jettisonVentral();
+        break;
       case 'reset':
         sim = new Sim();
         acc = 0;
