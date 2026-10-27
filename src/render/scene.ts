@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import type { Telemetry } from '../physics/sim';
 import { buildB52, buildX15, type X15Model } from './models';
+import { ViewControl } from './viewcontrol';
 
 export type CameraMode = 'chase' | 'cockpit' | 'side';
 export const CAMERA_MODES: CameraMode[] = ['chase', 'cockpit', 'side'];
@@ -10,6 +11,18 @@ export const CAMERA_MODES: CameraMode[] = ['chase', 'cockpit', 'side'];
 const LAKE_POSITION = new THREE.Vector3(360000, 0, 0);
 /** B-52 offset from the X-15 in its body frame while captive (X-15 is under the right wing). */
 const B52_OFFSET = new THREE.Vector3(1.5, 4.6, -8.5);
+
+/** Base external camera offsets in the X-15 body frame (x forward, y up, z right). */
+const EXTERNAL_OFFSETS: Record<Exclude<CameraMode, 'cockpit'>, THREE.Vector3> = {
+  chase: new THREE.Vector3(-30, 6, 0),
+  side: new THREE.Vector3(-4, 3, 28),
+};
+/** Pilot eye point in the body frame (m). */
+const EYE = new THREE.Vector3(5.2, 0.75, 0);
+/** Turns a camera (looking down -z) to look along body +x. */
+const LOOK_FORWARD = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
+const AXIS_Y = new THREE.Vector3(0, 1, 0);
+const AXIS_Z = new THREE.Vector3(0, 0, 1);
 
 const SKY_LOW = new THREE.Color(0x8db8de);
 const SKY_HIGH = new THREE.Color(0x0b1a3a);
@@ -25,11 +38,13 @@ export class SceneView {
   private b52Release: { pos: THREE.Vector3; t: number; vel: THREE.Vector3 } | null = null;
   private camQuat = new THREE.Quaternion();
   private fog: THREE.Fog;
-  mode: CameraMode = 'chase';
+  private _mode: CameraMode = 'chase';
+  readonly look: ViewControl;
 
   constructor(canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, logarithmicDepthBuffer: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.look = new ViewControl(canvas);
     this.camera = new THREE.PerspectiveCamera(60, 1, 0.1, 4e6);
     this.fog = new THREE.Fog(SKY_LOW, 80000, 900000);
     this.scene.fog = this.fog;
@@ -104,6 +119,16 @@ export class SceneView {
     return g;
   }
 
+  get mode(): CameraMode {
+    return this._mode;
+  }
+
+  /** Switching camera recentres the free-look view. */
+  set mode(m: CameraMode) {
+    this._mode = m;
+    this.look.reset();
+  }
+
   private resize(): void {
     const w = window.innerWidth, h = window.innerHeight;
     this.renderer.setSize(w, h);
@@ -149,18 +174,40 @@ export class SceneView {
     this.renderer.render(this.scene, this.camera);
   }
 
+  /** Orientation (body frame) for a camera at azimuth `az`, elevation `el` (positive looks down). */
+  private static orient(az: number, el: number): THREE.Quaternion {
+    return new THREE.Quaternion()
+      .setFromAxisAngle(AXIS_Y, az)
+      .multiply(new THREE.Quaternion().setFromAxisAngle(AXIS_Z, -el))
+      .multiply(LOOK_FORWARD);
+  }
+
   private updateCamera(att: THREE.Quaternion, dt: number): void {
     const cam = this.camera;
-    if (this.mode === 'cockpit') {
-      cam.position.set(5.2, 0.75, 0).applyQuaternion(att);
-      cam.quaternion.copy(att).multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, -Math.PI / 2, 0)));
-      cam.fov = 70;
+    const look = this.look;
+    if (this._mode === 'cockpit') {
+      // Head turns freely through 360°; pan leans the head a little; zoom narrows the FOV.
+      const q = SceneView.orient(-look.yaw, -look.pitch);
+      const lean = new THREE.Vector3(
+        THREE.MathUtils.clamp(look.panX, -0.3, 0.3),
+        THREE.MathUtils.clamp(look.panY, -0.2, 0.2),
+        0,
+      ).applyQuaternion(q);
+      cam.position.copy(EYE).add(lean).applyQuaternion(att);
+      cam.quaternion.copy(att).multiply(q);
+      cam.fov = THREE.MathUtils.clamp(70 * look.zoom, 12, 110);
     } else {
       this.camQuat.slerp(att, Math.min(1, dt * 3));
-      const offset = this.mode === 'chase' ? new THREE.Vector3(-30, 6, 0) : new THREE.Vector3(-4, 3, 28);
-      cam.position.copy(offset).applyQuaternion(this.camQuat);
-      cam.up.set(0, 1, 0).applyQuaternion(this.camQuat);
-      cam.lookAt(0, 0, 0);
+      const base = EXTERNAL_OFFSETS[this._mode];
+      const az = Math.atan2(base.z, -base.x) + look.yaw;
+      const el = Math.atan2(base.y, Math.hypot(base.x, base.z)) + look.pitch;
+      const q = SceneView.orient(az, el);
+      const dist = Math.max(6, base.length() * look.zoom);
+      // Orbit around a target point that panning slides across the view plane.
+      const target = new THREE.Vector3(look.panX * dist, look.panY * dist, 0).applyQuaternion(q);
+      const back = new THREE.Vector3(0, 0, dist).applyQuaternion(q);
+      cam.position.copy(target).add(back).applyQuaternion(this.camQuat);
+      cam.quaternion.copy(this.camQuat).multiply(q);
       cam.fov = 55;
     }
     cam.updateProjectionMatrix();

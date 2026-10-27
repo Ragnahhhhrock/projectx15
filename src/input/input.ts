@@ -2,7 +2,7 @@
 import type { Controls } from '../physics/sim';
 import type { Command } from '../worker/protocol';
 
-export type UiAction = 'camera' | 'help' | 'pause' | 'timescale';
+export type UiAction = 'camera' | 'help' | 'pause' | 'timescale' | 'resetView';
 
 const RAMP = 2.5; // per second towards full deflection
 const RETURN = 5; // per second back to centre
@@ -23,6 +23,7 @@ const UI_KEYS: Record<string, UiAction> = {
   KeyH: 'help',
   KeyP: 'pause',
   KeyT: 'timescale',
+  KeyV: 'resetView',
 };
 
 // Standard-mapping gamepad buttons
