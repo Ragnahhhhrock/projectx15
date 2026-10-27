@@ -148,3 +148,42 @@ export function textDecal(text: string, w: number, h: number, o: DecalOpts = {})
     new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }),
   );
 }
+
+/** USAF star-and-bar national insignia as a flat decal, `h` metres tall (width is 2h). */
+export function insigniaDecal(h: number): THREE.Mesh {
+  const ppm = 256;
+  const c = document.createElement('canvas');
+  c.width = Math.round(2 * h * ppm);
+  c.height = Math.round(h * ppm);
+  const ctx = c.getContext('2d')!;
+  const W = c.width, H = c.height, cx = W / 2, cy = H / 2, R = H / 2;
+  const blue = '#1c2a5e', red = '#b3201c', white = '#f4f4f4';
+  // Bars: blue outline, white bar, red stripe
+  ctx.fillStyle = blue;
+  ctx.fillRect(0, cy - R * 0.42, W, R * 0.84);
+  ctx.fillStyle = white;
+  ctx.fillRect(W * 0.02, cy - R * 0.34, W * 0.96, R * 0.68);
+  ctx.fillStyle = red;
+  ctx.fillRect(W * 0.02, cy - R * 0.12, W * 0.96, R * 0.24);
+  // Blue roundel with white star
+  ctx.fillStyle = blue;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = white;
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const r = i % 2 === 0 ? R * 0.97 : R * 0.38;
+    const a = -Math.PI / 2 + (i * Math.PI) / 5;
+    ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+  }
+  ctx.closePath();
+  ctx.fill();
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  return new THREE.Mesh(
+    new THREE.PlaneGeometry(2 * h, h),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }),
+  );
+}

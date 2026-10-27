@@ -1,7 +1,7 @@
 // Detailed aircraft models built from lofted sections. Body frame: +x nose, +y top, +z right wing.
-// Dimensions follow the real aircraft: X-15 15.45 m long, 6.7 m span; NB-52B 48 m long, 56.4 m span.
+// Dimensions follow the real aircraft: X-15 15.45 m long, 6.7 m span; NB-52 48 m long, 56.4 m span.
 import * as THREE from 'three';
-import { skinTexture, textDecal, whiteSkinTexture, wingTexture } from './textures';
+import { insigniaDecal, skinTexture, textDecal, whiteSkinTexture, wingTexture } from './textures';
 
 type V = [number, number, number];
 const D2R = Math.PI / 180;
@@ -343,8 +343,10 @@ export function buildB52(): THREE.Group {
   const wingMat = new THREE.MeshStandardMaterial({ map: wingTexture(), color: 0xffffff, metalness: 0.15, roughness: 0.6, side: THREE.DoubleSide });
   const grey = new THREE.MeshStandardMaterial({ color: 0x8c9096, metalness: 0.5, roughness: 0.45, side: THREE.DoubleSide });
   const black = new THREE.MeshStandardMaterial({ color: 0x090a0c, metalness: 0.4, roughness: 0.7, side: THREE.DoubleSide });
-  const red = new THREE.MeshStandardMaterial({ color: 0xc02a1d, metalness: 0.1, roughness: 0.6, side: THREE.DoubleSide });
   const glass = new THREE.MeshStandardMaterial({ color: 0x0b1118, metalness: 0.2, roughness: 0.08 });
+  // Early-1960s Edwards test-support scheme: fluorescent red-orange (dayglo) nose, wingtips, intakes and fin
+  const dayglo = new THREE.MeshStandardMaterial({ color: 0xd9301e, metalness: 0.05, roughness: 0.55, side: THREE.DoubleSide });
+  const orange = new THREE.MeshStandardMaterial({ color: 0xf0762a, metalness: 0.05, roughness: 0.55, side: THREE.DoubleSide });
 
   // Fuselage
   g.add(new THREE.Mesh(
@@ -353,6 +355,11 @@ export function buildB52(): THREE.Group {
       [4.0, 1.9], [-4.0, 1.9], [-9.0, 1.75], [-14.0, 1.4], [-18.0, 1.05], [-21.5, 0.7], [-23.5, 0.4], [-24.2, 0.3],
     ], 32, 12),
     white,
+  ));
+  // Dayglo nose cap
+  g.add(new THREE.Mesh(
+    fuselage([[23.87, 0], [23.52, 0.51], [22.62, 0.965], [21.6, 1.24], [21.0, 1.33]], 32, 12),
+    dayglo,
   ));
   // Cockpit windows: two forward panes, two side panes per side
   for (const s of [-1, 1]) {
@@ -367,20 +374,20 @@ export function buildB52(): THREE.Group {
     f.rotation.y = Math.PI / 2 - s * 0.45;
     g.add(f);
   }
-  // Chin radome (the NASA NB-52B had no tail guns, so the tail ends in a plain cone)
+  // Chin radome (the X-15 motherships had their tail guns removed, so the tail ends in a plain cone)
   const chin = new THREE.SphereGeometry(0.75, 16, 10);
   chin.scale(1.6, 0.8, 0.9);
   g.add(at(new THREE.Mesh(chin, grey), 20.2, -1.45, 0));
   // Markings
   for (const s of [1, -1]) {
-    const nasa = textDecal('NASA', 5.4, 1.35, { color: '#c8321f' });
-    nasa.position.set(9.0, 0.3, s * 1.935);
-    nasa.rotation.y = s > 0 ? 0 : Math.PI;
-    g.add(nasa);
-    const usaf = textDecal('NB-52B', 3.8, 0.62, { color: '#5b5f66' });
-    usaf.position.set(-9.5, 0.2, s * 1.77);
+    const usaf = textDecal('U.S. AIR FORCE', 4.6, 0.55, { color: '#23262b' });
+    usaf.position.set(14.5, 0.75, s * 1.88);
     usaf.rotation.y = s > 0 ? 0 : Math.PI;
     g.add(usaf);
+    const star = insigniaDecal(1.5);
+    star.position.set(-9.5, 0.4, s * 1.77);
+    star.rotation.y = s > 0 ? 0 : Math.PI;
+    g.add(star);
   }
 
   // Wings with engine pods and nav lights (NB-52 carried no external tanks)
@@ -411,7 +418,7 @@ export function buildB52(): THREE.Group {
         const nac = new THREE.Group();
         nac.position.z = dz;
         nac.add(tube(0.72, 0.8, 5.0, white));
-        nac.add(at(tube(0.8, 0.74, 0.5, grey), 2.7, 0, 0));
+        nac.add(at(tube(0.8, 0.74, 0.5, dayglo), 2.7, 0, 0));
         const intake = new THREE.Mesh(new THREE.CircleGeometry(0.66, 20), black);
         intake.position.x = 2.96;
         intake.rotation.y = Math.PI / 2;
@@ -426,6 +433,20 @@ export function buildB52(): THREE.Group {
       pod.add(py);
       g.add(pod);
     }
+
+    // Dayglo outer wing panel
+    const tipPanel = new THREE.Mesh(
+      surfaceH('lens', [23.0, 28.25].map((z) => { const w = wingAt(z); return { ...w, t: w.t * 1.06 + 0.02, le: w.le + 0.01, te: w.te - 0.01 }; })),
+      dayglo,
+    );
+    tipPanel.scale.z = s;
+    g.add(tipPanel);
+    // Insignia on the upper surface of the left wing, lower surface of the right
+    const wi = wingAt(19.0);
+    const wingStar = insigniaDecal(1.7);
+    wingStar.position.set((wi.le + wi.te) / 2, s > 0 ? wi.yc - wi.t * 0.48 : wi.yc + wi.t * 0.48, s * 19.0);
+    wingStar.rotation.set(s > 0 ? Math.PI / 2 : -Math.PI / 2, 0, s > 0 ? Math.PI / 2 : -Math.PI / 2);
+    g.add(wingStar);
 
     // Navigation light at the wingtip: red left, green right
     const tip = wingAt(28.2);
@@ -443,7 +464,7 @@ export function buildB52(): THREE.Group {
     g.add(stab);
   }
 
-  // Tail fin with red tip band and tail number
+  // Tail fin: dayglo orange above a white root, serial 20003
   const finBase: SecV = { le: -12.5, te: -23.5, y: 1.0, t: 0.7 };
   const finTip: SecV = { le: -19.5, te: -24.0, y: 9.0, t: 0.35 };
   const lerpSec = (f: number): SecV => ({
@@ -452,11 +473,11 @@ export function buildB52(): THREE.Group {
     y: finBase.y + (finTip.y - finBase.y) * f,
     t: finBase.t + (finTip.t - finBase.t) * f,
   });
-  g.add(new THREE.Mesh(surfaceV('wedge', [lerpSec(0), lerpSec(0.82)]), white));
-  g.add(new THREE.Mesh(surfaceV('wedge', [lerpSec(0.82), lerpSec(1)]), red));
-  const fs = lerpSec(0.45);
+  g.add(new THREE.Mesh(surfaceV('wedge', [lerpSec(0), lerpSec(0.22)]), white));
+  g.add(new THREE.Mesh(surfaceV('wedge', [lerpSec(0.22), lerpSec(1)]), orange));
+  const fs = lerpSec(0.72);
   for (const s of [1, -1]) {
-    const num = textDecal('008', 3.6, 1.5, { color: '#c8321f' });
+    const num = textDecal('20003', 2.4, 0.6, { color: '#7a1c12' });
     num.position.set((fs.le + fs.te) / 2 - 0.3, fs.y, s * (fs.t / 2 + 0.015));
     num.rotation.y = s > 0 ? 0 : Math.PI;
     g.add(num);
