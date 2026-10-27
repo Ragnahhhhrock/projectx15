@@ -30,7 +30,7 @@ html, body {
     radial-gradient(circle at center, transparent var(--tunnel, 85%), rgb(0 0 0 / var(--edge, 0)) calc(var(--tunnel, 85%) + 25%), #000 100%);
 }
 #gvision[hidden] { display: none; }
-#hud, #status, #help, #coach, #records { z-index: 10; }
+#hud, #status, #help, #coach, #corner { z-index: 10; }
 
 /* ---- HUD ------------------------------------------------------------- */
 #hud {
@@ -338,11 +338,17 @@ html, body {
 body.replaying #view { outline: 3px solid var(--action); outline-offset: -3px; }
 body.replaying #help, body.replaying #coach { display: none; }
 /* ---- Record challenge ---------------------------------------------- */
-#records {
+#corner {
   position: fixed;
   left: var(--space-4);
   bottom: var(--space-4);
   width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+#records, #stats {
   display: grid;
   gap: var(--space-2);
   padding: var(--space-3) 14px;
@@ -363,4 +369,16 @@ body.replaying #help, body.replaying #coach { display: none; }
 #records .rec.done .rec-top b { color: var(--action); }
 #records .rec.locked { opacity: 0.55; }
 #records .rec-flash { margin: 0; padding: 4px 6px; color: var(--action-text); background: var(--action); border-radius: 2px; font-weight: 600; letter-spacing: 0.04em; }
-body.replaying #records { display: none; }
+body.replaying #corner { display: none; }
+
+/* ---- Logbook stats --------------------------------------------------- */
+#stats h4 { margin: 0; font: 500 var(--fs-xs) var(--font-display); letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); }
+#stats .st-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); }
+#stats .st { display: flex; flex-direction: column; }
+#stats .st b { font: 500 1.25em var(--font-display); color: var(--text); font-variant-numeric: tabular-nums; }
+#stats .st span, #stats small { color: var(--text-dim); }
+#stats .st.ok b { color: var(--data); }
+#stats .st.bad b { color: var(--action); }
+#stats .st-types { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+#stats .st-types li { display: flex; justify-content: space-between; color: var(--text-dim); }
+#stats .st-types b { font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; }

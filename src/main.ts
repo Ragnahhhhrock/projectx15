@@ -7,6 +7,7 @@ import { Pfd } from './ui/pfd';
 import { FlightRecorder } from './replay/recorder';
 import { ReplayPlayer } from './replay/player';
 import { Records } from './ui/records';
+import { FlightStats } from './ui/stats';
 import { AudioEngine } from './audio/audio';
 import type { FromWorker, ToWorker } from './worker/protocol';
 import type { Telemetry } from './physics/sim';
@@ -39,6 +40,7 @@ coach.onNewFlight = () => send({ type: 'command', command: 'reset' });
 const params = new URLSearchParams(location.search);
 if (params.has('scenario')) send({ type: 'scenario', name: params.get('scenario')! });
 const analytics = new FlightAnalytics(params.get('scenario'));
+const stats = new FlightStats(document.getElementById('stats')!);
 const records = new Records(document.getElementById('records')!, !params.has('scenario'));
 if (params.has('debug')) (window as unknown as { __x15: unknown }).__x15 = { view, send };
 
@@ -49,6 +51,7 @@ let timescale = 1;
 worker.onmessage = (e: MessageEvent<FromWorker>) => {
   latest = e.data.telemetry;
   analytics.update(latest);
+  stats.update(latest);
   if (!e.data.paused) recorder.push(latest);
   paused = e.data.paused;
   timescale = e.data.timescale;

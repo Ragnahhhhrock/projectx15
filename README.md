@@ -31,6 +31,15 @@ A panel (bottom left) tracks two goals on every full flight from the B-52, with 
 
 `record_matched` fires to GA4 when a record is matched. Practice scenarios do not count.
 
+## Logbook
+
+A panel above the record challenge keeps the player's running totals, saved in the browser and updated as each flight ends (and across open tabs):
+
+- **Flights** — counted once the X-15 leaves the B-52 (or a practice scenario starts free)
+- **Landings** — clean landings on the gear; belly landings are listed separately as damaged
+- **Crashes** — total, broken down by type: airframe overload, hard landing, sideways touchdown, off the lakebed, gear-up impact, ventral fin strike, flown into the ground
+- **Landed %** — clean landings per flight
+
 ## Run it
 
 ```bash
