@@ -17,7 +17,7 @@ export class HomeScreen {
       <div class="home-card x-panel">
         <p class="x-label">Browser flight simulator</p>
         <h1 class="x-display">Project X-15</h1>
-        <p class="home-sub">Drop from the B-52, light the XLR99, ride it to the edge of space and land on Rogers Dry Lake. Every flight is graded out of 1,000.</p>
+        <p class="home-sub">Drop from the B-52, light the XLR99, ride it to the edge of space and land on Rogers Dry Lake. Every flight is graded out of 1,000. The step-by-step flight guide coaches you all the way down; press <b>B</b> to show or hide it.</p>
         <h2 class="x-label">Top 10 pilots</h2>
         <div id="homeBoard" aria-live="polite"><p class="lb-empty">Loading…</p></div>
         <form id="homeForm" class="home-form">

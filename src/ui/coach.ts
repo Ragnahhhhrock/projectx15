@@ -304,7 +304,8 @@ export class Coach {
   constructor(el: HTMLElement) {
     this.el = el;
     try {
-      this.onState = localStorage.getItem('x15.coach') !== 'off';
+      // New key: earlier builds remembered Skip as "off for good", which lost the guide for returning pilots.
+      this.onState = localStorage.getItem('x15.guide') !== 'off';
     } catch {
       /* storage blocked: default on */
     }
@@ -313,7 +314,7 @@ export class Coach {
     if (p === '1' || p === 'on') this.onState = true;
     this.q('coachSkip').addEventListener('click', () => {
       track('guide_skip', { step: STEPS[this.i].id, index: this.i + 1 });
-      this.setOn(false);
+      this.el.hidden = true; // this flight only; it comes back next flight (B turns it off for good)
     });
     window.addEventListener('keydown', (e) => {
       if (!this.visible || e.code !== 'Enter' || ['BUTTON', 'INPUT'].includes((e.target as HTMLElement)?.tagName)) return;
@@ -331,12 +332,12 @@ export class Coach {
   private get ctx(): Ctx { return { profile: this.profile }; }
 
   /** B key: turn the guide on or off (remembered between visits). */
-  toggle(): void { this.setOn(!this.onState); }
+  toggle(): void { this.setOn(!(this.onState && this.visible)); }
 
   setOn(on: boolean): void {
     this.onState = on;
     try {
-      localStorage.setItem('x15.coach', on ? 'on' : 'off');
+      localStorage.setItem('x15.guide', on ? 'on' : 'off');
     } catch {
       /* ignore */
     }

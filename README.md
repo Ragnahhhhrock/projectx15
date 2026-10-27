@@ -106,7 +106,7 @@ tests/         unit tests and headless flight profiles
 
 ## Flight guide
 
-A step-by-step coach for first-time pilots, modelled on the lessons in Fly Kai Tak (`src/ui/coach.ts`). It is on by default; **B** turns it on or off (remembered), **Skip guide** turns it off, `?guide=0` / `?guide=1` override it. Thirteen steps follow the active guide-box profile: drop, ignite, throttle, pull-up, boost, coast, re-entry, glide to the lake, ventral fin, gear, flare, rollout. Each step shows a live meter with its target zone, amber warnings in plain words, and moves on when the aircraft does what it asked. It picks up at the matching step in a practice scenario, and a crash shows a tip for what went wrong.
+A step-by-step coach for first-time pilots, modelled on the lessons in Fly Kai Tak (`src/ui/coach.ts`). It is on by default; **B** turns it on or off (remembered), **Skip guide** hides it for the current flight, `?guide=0` / `?guide=1` override it. Thirteen steps follow the active guide-box profile: drop, ignite, throttle, pull-up, boost, coast, re-entry, glide to the lake, ventral fin, gear, flare, rollout. Each step shows a live meter with its target zone, amber warnings in plain words, and moves on when the aircraft does what it asked. It picks up at the matching step in a practice scenario, and a crash shows a tip for what went wrong.
 
 ## Practice scenarios
 
