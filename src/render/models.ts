@@ -385,9 +385,22 @@ export function buildB52(): THREE.Group {
 
   // Wings with engine pods and nav lights (NB-52 carried no external tanks)
   for (const s of [1, -1]) {
-    const wing = new THREE.Mesh(surfaceH('lens', B52_WING), wingMat);
-    wing.scale.z = s;
-    g.add(wing);
+    if (s > 0) {
+      // Right wing: notch cut in the inboard trailing edge to clear the X-15's upper fin
+      const n0 = wingAt(X15_ON_B52[2] - 0.6);
+      const n1 = wingAt(X15_ON_B52[2] + 0.6);
+      const notchTe = -6.3;
+      for (const secs of [
+        [B52_WING[0], n0], // inboard of the notch (end cap forms the inboard wall)
+        [{ ...n0, te: notchTe }, { ...n1, te: notchTe }], // shortened chord across the notch
+        [n1, { ...n1, z: n1.z - 0.001 }], // outboard wall of the notch
+        [n1, ...B52_WING.slice(1)], // outboard of the notch
+      ]) g.add(new THREE.Mesh(surfaceH('lens', secs), wingMat));
+    } else {
+      const wing = new THREE.Mesh(surfaceH('lens', B52_WING), wingMat);
+      wing.scale.z = s;
+      g.add(wing);
+    }
 
     for (const zc of [9.2, 15.6]) {
       const w = wingAt(zc);
