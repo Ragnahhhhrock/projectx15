@@ -1,0 +1,60 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:"Plex Cond";font-weight:700;src:url("FONTDIR/ibm-plex-sans-condensed/files/ibm-plex-sans-condensed-latin-700-normal.woff2")}
+@font-face{font-family:"Plex Cond";font-weight:600;src:url("FONTDIR/ibm-plex-sans-condensed/files/ibm-plex-sans-condensed-latin-600-normal.woff2")}
+@font-face{font-family:"Plex Mono";font-weight:500;src:url("FONTDIR/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2")}
+@font-face{font-family:"Plex Mono";font-weight:400;src:url("FONTDIR/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2")}
+*{box-sizing:border-box;margin:0}
+html,body{width:1200px;height:var(--h,630px);overflow:hidden}
+body{--h:630px;position:relative;background:linear-gradient(180deg,#05070a 0%,#0c1726 62%,#183a5f 100%);color:#e9f3e4;font-family:"Plex Mono"}
+body.tw{--h:600px;height:600px}
+.stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 12% 18%,#fff8,transparent),radial-gradient(1px 1px at 31% 8%,#fff6,transparent),radial-gradient(1.5px 1.5px at 58% 22%,#fff8,transparent),radial-gradient(1px 1px at 77% 12%,#fff7,transparent),radial-gradient(1px 1px at 91% 30%,#fff6,transparent),radial-gradient(1px 1px at 44% 35%,#fff5,transparent),radial-gradient(1px 1px at 5% 42%,#fff5,transparent)}
+.earth{position:absolute;left:-300px;right:-300px;bottom:-1010px;height:1100px;border-radius:50%;background:radial-gradient(ellipse at 50% 0%,#12263d 0%,#0a1625 40%,#05090f 100%);box-shadow:0 -2px 0 #3d8bd9,0 -10px 40px #3d8bd9aa,0 -30px 120px #3d8bd955}
+.grid{position:absolute;inset:0;background:repeating-linear-gradient(90deg,#9be38a0f 0 1px,transparent 1px 80px),repeating-linear-gradient(0deg,#9be38a0f 0 1px,transparent 1px 80px);mask-image:linear-gradient(90deg,#000 0,transparent 75%)}
+svg.jet{position:absolute;right:-20px;top:70px;width:520px;transform:rotate(-16deg);filter:drop-shadow(0 0 30px #ff6a1a55)}
+body.tw svg.jet{top:60px}
+.copy{position:absolute;left:72px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;width:760px;padding-bottom:70px}
+.kicker{font:600 20px "Plex Cond";letter-spacing:.2em;color:#ff6a1a;text-transform:uppercase;margin-bottom:18px}
+h1{white-space:nowrap;font:700 108px/0.92 "Plex Cond";letter-spacing:.01em;text-transform:uppercase;text-shadow:0 4px 40px #000}
+h1 em{font-style:normal;color:#9be38a}
+.tag{font:400 25px/1.4 "Plex Mono";color:#c4d2bf;margin-top:22px;max-width:560px}
+.stats{position:absolute;left:72px;right:72px;bottom:44px;display:flex;justify-content:space-between;align-items:flex-end}
+.stat{font:600 16px "Plex Cond";letter-spacing:.16em;color:#8fa08a;text-transform:uppercase}
+.stat b{display:block;font:500 34px "Plex Mono";letter-spacing:0;color:#9be38a;margin-top:4px;font-variant-numeric:tabular-nums}
+.stats .row{display:flex;gap:56px}
+.url{font:500 26px "Plex Mono";color:#e9f3e4;border:1px solid #9be38a80;padding:10px 18px;border-radius:2px;background:#05070acc}
+body.tw .copy{padding-bottom:60px}
+</style></head>
+<body class="CLS">
+<div class="stars"></div><div class="grid"></div><div class="earth"></div>
+<svg class="jet" viewBox="0 0 520 130" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="fl" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#ffd9a8"/><stop offset=".25" stop-color="#ff6a1a"/><stop offset="1" stop-color="#ff6a1a" stop-opacity="0"/></linearGradient>
+  <linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4045"/><stop offset=".5" stop-color="#16191c"/><stop offset="1" stop-color="#0a0c0e"/></linearGradient>
+ </defs>
+ <path d="M0 63 L118 54 L118 72 Z" fill="url(#fl)"/>
+ <path d="M30 63 L125 57 L125 69Z" fill="#ffe9cc" opacity=".8"/>
+ <g stroke="#9bb0c8" stroke-width="1.6" stroke-linejoin="round" fill="url(#sk)">
+  <path d="M138 55 L112 6 L170 6 L216 53Z"/>
+  <path d="M148 73 L128 124 L178 124 L220 75Z"/>
+  <path d="M130 52 L430 47 Q482 51 512 63 Q482 75 430 79 L130 76Z"/>
+  <path d="M200 66 L330 56 L330 70Z" opacity=".6"/>
+ </g>
+ <path d="M410 48 Q430 28 456 49Z" fill="#1c2a38" stroke="#9be38a" stroke-width="1.6"/>
+ <path d="M150 62 H420" stroke="#9be38a" stroke-opacity=".35" stroke-width="1" stroke-dasharray="3 7"/>
+</svg>
+<div class="copy">
+ <div class="kicker">Flight simulator · Edwards AFB · 1959–1968</div>
+ <h1>Project <em>X-15</em></h1>
+ <p class="tag">Drop from the B-52. Light the XLR99. Ride it to the edge of space.</p>
+</div>
+<div class="stats">
+ <div class="row">
+  <div class="stat">Top speed<b>MACH 6.72</b></div>
+  <div class="stat">Peak altitude<b>354,200 FT</b></div>
+  <div class="stat">Burn<b>~85 S</b></div>
+ </div>
+ <div class="url">projectx15.com</div>
+</div>
+</body></html>

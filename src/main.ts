@@ -3,6 +3,7 @@ import { CAMERA_MODES, SceneView } from './render/scene';
 import { Hud } from './ui/hud';
 import type { FromWorker, ToWorker } from './worker/protocol';
 import type { Telemetry } from './physics/sim';
+import './styles/fonts';
 import './style.css';
 
 const TIMESCALES = [1, 2, 4, 8];

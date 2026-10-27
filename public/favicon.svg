@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Project X-15">
+  <rect width="512" height="512" rx="96" fill="#05070a"/>
+  <defs>
+    <linearGradient id="g" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#183a5f"/><stop offset="1" stop-color="#05070a"/>
+    </linearGradient>
+    <linearGradient id="f" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#ffb36b"/><stop offset="1" stop-color="#ff6a1a" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#g)" opacity=".55"/>
+  <path d="M-20 470 Q256 360 532 470 V532 H-20Z" fill="#0c1726"/>
+  <path d="M-20 470 Q256 360 532 470" fill="none" stroke="#3d8bd9" stroke-width="5" opacity=".9"/>
+  <g transform="rotate(-24 256 250)">
+    <path d="M40 252 L250 238 L250 266 Z" fill="url(#f)"/>
+    <g fill="#e9f3e4">
+      <path d="M96 238 L82 176 L150 176 L196 234Z"/>
+      <path d="M106 266 L90 326 L146 326 L186 268Z"/>
+      <path d="M96 236 L388 232 Q440 236 470 252 Q440 268 388 272 L96 270 Z"/>
+    </g>
+    <path d="M360 233 Q378 214 404 234Z" fill="#9be38a"/>
+  </g>
+</svg>

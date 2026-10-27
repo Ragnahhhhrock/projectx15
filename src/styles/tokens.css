@@ -1,0 +1,124 @@
+/*
+ * Project X-15 design tokens.
+ * Source of truth for colour, type, spacing and motion. See docs/DESIGN.md.
+ * Dark ("Black Sky") is the default theme; [data-theme="paper"] is the
+ * flight-test data-sheet theme for briefings, docs and print.
+ */
+
+:root {
+  /* ---- Raw palette ---------------------------------------------------- */
+  --x15-space-black: #05070a;   /* sky above 300,000 ft */
+  --x15-stratosphere: #0c1726;  /* deep blue at the edge of space */
+  --x15-limb: #3d8bd9;          /* Earth's limb glow */
+  --x15-inconel: #16191c;       /* the X-15's black Inconel X skin */
+  --x15-inconel-2: #22272b;
+  --x15-graphite: #3a4045;
+
+  --x15-phosphor: #9be38a;      /* instrument / HUD green */
+  --x15-phosphor-dim: #5f9b54;
+  --x15-ink: #e9f3e4;           /* text on dark */
+  --x15-ink-dim: #8fa08a;
+
+  --x15-xlr99: #ff6a1a;         /* XLR99 flame — the one action colour */
+  --x15-xlr99-hot: #ffb36b;
+  --x15-lakebed: #d9c7a3;       /* Rogers Dry Lake */
+  --x15-paper: #f2ede1;         /* flight-test data sheet */
+  --x15-paper-2: #e6dfcd;
+  --x15-pencil: #1d2226;
+
+  --x15-caution: #ffb020;       /* amber caution lamp */
+  --x15-warning: #ff3b30;       /* red warning lamp */
+  --x15-nominal: var(--x15-phosphor);
+
+  /* ---- Semantic: Black Sky (default) -------------------------------- */
+  --bg: var(--x15-space-black);
+  --bg-sky: linear-gradient(180deg, var(--x15-space-black) 0%, var(--x15-stratosphere) 70%, #183a5f 100%);
+  --surface: var(--x15-inconel);
+  --surface-2: var(--x15-inconel-2);
+  --panel: rgba(8, 12, 10, 0.62);
+  --border: rgba(155, 227, 138, 0.25);
+  --border-strong: rgba(155, 227, 138, 0.5);
+  --text: var(--x15-ink);
+  --text-dim: var(--x15-ink-dim);
+  --data: var(--x15-phosphor);
+  --action: var(--x15-xlr99);
+  --action-text: #160800;
+  --link: var(--x15-phosphor);
+  --focus: var(--x15-xlr99-hot);
+
+  /* Legacy aliases used by the HUD */
+  --ink: var(--text);
+  --dim: var(--text-dim);
+  --accent: var(--data);
+
+  /* ---- Typography ---------------------------------------------------- */
+  --font-display: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* 1.25 scale from 16px */
+  --fs-micro: 11px;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-base: 16px;
+  --fs-md: 20px;
+  --fs-lg: 25px;
+  --fs-xl: 31px;
+  --fs-2xl: 39px;
+  --fs-3xl: 49px;
+  --fs-4xl: 61px;
+  --fs-hero: clamp(48px, 9vw, 112px);
+
+  --lh-tight: 1.05;
+  --lh-snug: 1.25;
+  --lh-body: 1.55;
+
+  --track-label: 0.12em;   /* uppercase labels, stencils */
+  --track-display: 0.02em;
+
+  /* ---- Space, shape, depth ------------------------------------------ */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  --radius-sm: 2px;   /* instrument bezels, tags */
+  --radius: 6px;      /* panels */
+  --radius-lg: 10px;
+
+  --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px rgba(0, 0, 0, 0.45);
+  --glow-data: 0 0 8px rgba(155, 227, 138, 0.35);
+  --glow-action: 0 0 18px rgba(255, 106, 26, 0.45);
+
+  /* ---- Motion -------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur: 200ms;
+  --dur-slow: 400ms;
+}
+
+[data-theme='paper'] {
+  --bg: var(--x15-paper);
+  --bg-sky: var(--x15-paper);
+  --surface: #fbf8f1;
+  --surface-2: var(--x15-paper-2);
+  --panel: rgba(251, 248, 241, 0.92);
+  --border: rgba(29, 34, 38, 0.18);
+  --border-strong: rgba(29, 34, 38, 0.45);
+  --text: var(--x15-pencil);
+  --text-dim: #5d625f;
+  --data: #2f6b26;
+  --action: #d9520b;
+  --action-text: #fff;
+  --link: #2f6b26;
+  --focus: #d9520b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast: 0ms; --dur: 0ms; --dur-slow: 0ms; }
+}
