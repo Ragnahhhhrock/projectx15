@@ -383,7 +383,7 @@ export function buildB52(): THREE.Group {
     g.add(usaf);
   }
 
-  // Wings with engine pods, outer tanks and nav lights
+  // Wings with engine pods and nav lights (NB-52 carried no external tanks)
   for (const s of [1, -1]) {
     const wing = new THREE.Mesh(surfaceH('lens', B52_WING), wingMat);
     wing.scale.z = s;
@@ -413,18 +413,6 @@ export function buildB52(): THREE.Group {
       pod.add(py);
       g.add(pod);
     }
-
-    // Outboard external fuel tank
-    const wt = wingAt(21.5);
-    const tank = new THREE.Group();
-    tank.position.set(wt.le - 0.3, wt.yc - wt.t / 2 - 0.95, s * 21.5);
-    tank.add(tube(0.6, 0.65, 6.2, white));
-    const nose = new THREE.SphereGeometry(0.65, 16, 10);
-    nose.scale(1.8, 1, 1);
-    tank.add(at(new THREE.Mesh(nose, white), 3.1, 0, 0));
-    tank.add(at(tube(0.6, 0.12, 1.8, white), -3.9, 0, 0));
-    tank.add(at(new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.65, 0.2), white), 0, 0.7, 0));
-    g.add(tank);
 
     // Navigation light at the wingtip: red left, green right
     const tip = wingAt(28.2);
