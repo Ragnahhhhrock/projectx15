@@ -1,0 +1,32 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Demo cards</title>
+<style>
+:root{--ink:#e9f3e4;--dim:#8fa08a;--ph:#9be38a;--fl:#ff6a1a}
+*{box-sizing:border-box;margin:0}
+html,body{width:100%;height:100%;background:#05070a;color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;overflow:hidden}
+.bg{position:fixed;inset:0;background:linear-gradient(180deg,#05070a 0%,#0c1726 62%,#183a5f 100%)}
+.limb{position:fixed;left:-20%;right:-20%;bottom:-62vmax;height:70vmax;border-radius:50%;background:radial-gradient(ellipse at 50% 0%,#3d8bd9 0,#183a5f 3%,#05070a 14%);opacity:.9}
+.wrap{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 9vw}
+.port .wrap{padding:0 8vw}
+.kicker{font:500 1.9vmin 'IBM Plex Mono',monospace;letter-spacing:.32em;color:var(--ph);text-transform:uppercase;margin-bottom:2.4vmin}
+h1{font:700 11vmin/0.95 'IBM Plex Sans Condensed','IBM Plex Sans',sans-serif;letter-spacing:.01em;text-transform:uppercase}
+h1 b{color:var(--fl);font-weight:700}
+p{font:400 3vmin/1.35 'IBM Plex Sans',sans-serif;color:var(--dim);margin-top:3vmin;max-width:34em}
+.url{font:600 4.4vmin 'IBM Plex Mono',monospace;color:var(--ph);margin-top:4vmin}
+.cta{display:inline-block;margin-top:3.4vmin;padding:1.8vmin 3.2vmin;background:var(--fl);color:#05070a;font:600 2.6vmin 'IBM Plex Mono',monospace;letter-spacing:.14em;border-radius:6px;align-self:flex-start}
+.stats{display:flex;gap:5vmin;margin-top:4.5vmin;font:500 2.2vmin 'IBM Plex Mono',monospace;color:var(--dim)}
+.stats b{display:block;font:600 5vmin 'IBM Plex Mono',monospace;color:var(--ink)}
+</style></head><body>
+<div class="bg"></div><div class="limb"></div>
+<div class="wrap" id="w"></div>
+<script>
+const q=new URLSearchParams(location.search);
+document.body.classList.add(q.get('fmt')==='port'?'port':'land');
+const w=document.getElementById('w');
+if(q.get('card')==='intro'){
+ w.innerHTML=`<div class="kicker">Browser flight simulator</div><h1>Project<br><b>X-15</b></h1><p>Drop from the B-52. Light the XLR99. Ride it to the edge of space.</p>
+ <div class="stats"><div><b>Mach 6</b>top speed</div><div><b>354,200 ft</b>record altitude</div></div>`;
+}else{
+ w.innerHTML=`<div class="kicker">In your browser</div><h1>Fly the<br><b>X-15</b></h1><p>Drop, burn, coast, re-enter and land on Rogers Dry Lake. Every flight is graded out of 1,000.</p><div class="url">projectx15.com</div><div class="cta">FLY NOW</div>`;
+}
+</script></body></html>
