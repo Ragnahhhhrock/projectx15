@@ -44,6 +44,7 @@ npm run build    # production build in dist/
 | L / K | Landing gear down · jettison ventral fin (both one-way, do both before landing) |
 | C | Camera: chase, cockpit, side |
 | G / J | Guide boxes on/off · switch guide profile (altitude / speed) |
+| B | Flight guide on/off (step-by-step help, Enter to continue) |
 | T / P / N | Time scale, pause, new flight |
 | Gamepad | Sticks fly, triggers throttle, A ignite, Y release |
 
@@ -58,6 +59,10 @@ src/input/     keyboard + Gamepad API
 src/ui/        HUD
 tests/         unit tests and headless flight profiles
 ```
+
+## Flight guide
+
+A step-by-step coach for first-time pilots, modelled on the lessons in Fly Kai Tak (`src/ui/coach.ts`). It is on by default; **B** turns it on or off (remembered), **Skip guide** turns it off, `?guide=0` / `?guide=1` override it. Thirteen steps follow the active guide-box profile: drop, ignite, throttle, pull-up, boost, coast, re-entry, glide to the lake, ventral fin, gear, flare, rollout. Each step shows a live meter with its target zone, amber warnings in plain words, and moves on when the aircraft does what it asked. It picks up at the matching step in a practice scenario, and a crash shows a tip for what went wrong.
 
 ## Practice scenarios
 
@@ -77,3 +82,4 @@ GA4 (`G-36Q83P4LEH`, via Google tag gateway on Cloudflare). Events are fired fro
 | `gear_down`, `ventral_jettison` | Landing prep | as above |
 | `flight_end` | Landed or crashed | `outcome`, `max_mach`, `max_altitude_ft`, `max_g`, `crash_reason`, `touchdown_kt`, `sink_fps` |
 | `camera_change` | C key | `camera` |
+| `guide_start` / `guide_step` / `guide_complete` / `guide_skip` / `guide_crash` | Flight guide progress | `step`, `index`, `reason` |

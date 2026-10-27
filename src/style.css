@@ -30,7 +30,7 @@ html, body {
     radial-gradient(circle at center, transparent var(--tunnel, 85%), rgb(0 0 0 / var(--edge, 0)) calc(var(--tunnel, 85%) + 25%), #000 100%);
 }
 #gvision[hidden] { display: none; }
-#hud, #status, #help { z-index: 10; }
+#hud, #status, #help, #coach { z-index: 10; }
 
 /* ---- HUD ------------------------------------------------------------- */
 #hud {
@@ -89,6 +89,61 @@ html, body {
 #help table { border-collapse: collapse; }
 #help td { padding: 0 var(--space-3) 0 0; }
 #help td:first-child { color: var(--text-dim); }
+
+/* ---- Flight guide (coach) --------------------------------------------- */
+#coach {
+  position: fixed;
+  top: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(470px, calc(100vw - 720px));
+  min-width: 340px;
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--action);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(6px);
+  font-family: var(--font-body);
+}
+#coach[hidden] { display: none !important; }
+#coach.lost { border-left-color: var(--x15-warning); }
+.coach-top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+.coach-top .x-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.coach-top .x-label.ok { color: var(--data); }
+#coach .x-btn { min-height: 28px; padding: 0 var(--space-3); font-size: var(--fs-micro); }
+#coach h3 { margin: 0; font: 700 var(--fs-md) / var(--lh-tight, 1.15) var(--font-display); letter-spacing: var(--track-display); text-wrap: balance; }
+#coach p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--text); }
+#coach p b { color: var(--data); font-weight: 600; }
+#coach kbd {
+  font: 500 var(--fs-micro) / 1 var(--font-mono);
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  padding: 1px 6px;
+  white-space: nowrap;
+  color: var(--text);
+}
+#coach .coach-warn { color: var(--x15-caution); font-weight: 600; font-size: var(--fs-sm); }
+.cm-row { display: flex; justify-content: space-between; font: 500 var(--fs-xs) / 1.6 var(--font-mono); color: var(--text-dim); }
+.cm-row b { color: var(--data); font-weight: 500; font-variant-numeric: tabular-nums; }
+.cm-bar { position: relative; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
+.cm-bar i { position: absolute; top: 0; bottom: 0; left: 0; }
+.cm-zone { background: rgba(155, 227, 138, 0.22); border-left: 1px solid var(--data); border-right: 1px solid var(--data); }
+.cm-fill { background: var(--text-dim); border-radius: 4px; transition: background var(--dur); }
+.cm-bar.in .cm-fill { background: var(--data); }
+.cm-bar.bad .cm-fill { background: var(--x15-warning); }
+.coach-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.coach-actions .x-btn { min-height: 36px; }
+.coach-actions .x-btn--primary { flex: 1 1 auto; justify-content: space-between; gap: var(--space-4); }
+.coach-actions .k { font: 500 var(--fs-micro) / 1 var(--font-mono); opacity: 0.7; }
+.coach-dots { display: flex; gap: 5px; }
+.coach-dots i { width: 18px; height: 4px; border-radius: 2px; background: var(--border); }
+.coach-dots i.d { background: var(--data); }
+.coach-dots i.c { background: var(--action); }
 
 /* ---- Shared components (menus, briefings, results) -------------------- */
 .x-label {

@@ -68,6 +68,15 @@
     <div id="gvision" hidden></div>
     <div id="status"></div>
     <div id="hud"></div>
+    <div id="coach" hidden>
+      <div class="coach-top"><span class="x-label" id="coachStep"></span><button class="x-btn" id="coachSkip" type="button">Skip guide</button></div>
+      <h3 id="coachTitle" aria-live="polite"></h3>
+      <p id="coachBody"></p>
+      <div id="coachMeter" hidden><div class="cm-row"><span id="cmLabel"></span><b id="cmVal"></b></div><div class="cm-bar" id="cmBar"><i class="cm-zone" id="cmZone"></i><i class="cm-fill" id="cmFill"></i></div></div>
+      <p class="coach-warn" id="coachWarn" role="alert" hidden></p>
+      <div class="coach-actions" id="coachActions" hidden></div>
+      <div class="coach-dots" id="coachDots" aria-hidden="true"></div>
+    </div>
     <div id="help">
       <h2>CONTROLS · H TO HIDE</h2>
       <table>
@@ -92,6 +101,7 @@
         <tr><td>U</td><td>Show / hide the text readout in the cockpit</td></tr>
         <tr><td>G</td><td>Flight-profile guide boxes on/off</td></tr>
         <tr><td>J</td><td>Guide profile: altitude / speed</td></tr>
+        <tr><td>B</td><td>Flight guide (step-by-step help) on/off</td></tr>
         <tr><td>N</td><td>New flight</td></tr>
         <tr><td>Gamepad</td><td>Sticks fly, triggers throttle, A ignite, Y release</td></tr>
       </table>
