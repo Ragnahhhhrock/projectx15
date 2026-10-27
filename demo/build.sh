@@ -10,20 +10,20 @@ build() { # fmt dir outW outH fontsize boxy
   local cap="drawtext=fontfile=$FONT:fontsize=$fs:fontcolor=0xe9f3e4:box=1:boxcolor=0x05070acc:boxborderw=14:x=(w-text_w)/2:y=$y"
   local caps=""
   add() { caps+=",${cap}:text='$3':enable='between(t,$1,$2)'"; }
-  add 0.3 3.8  'CAPTIVE CARRY UNDER THE NB-52'
-  add 4.2 9.8  'DROP AND XLR99 IGNITION'
-  add 10.2 17.8 'BOOST TO MACH 5.8'
-  add 18.2 23.8 'COAST TO 377,000 FT'
-  add 24.2 29.8 'RE-ENTRY'
-  add 30.2 41.8 'LAND ON ROGERS DRY LAKE'
+  add 0.2 1.4  'CARRIED BY THE NB-52'
+  add 1.6 5.9  'DROP + XLR99 IGNITION'
+  add 6.1 10.9 'BOOST TO MACH 5.8'
+  add 11.1 14.9 'EDGE OF SPACE: 377,000 FT'
+  add 15.1 18.4 'RE-ENTRY'
+  add 18.6 23.3 'LAND ON ROGERS DRY LAKE'
   ffmpeg -y -loglevel error \
-    -loop 1 -t 3 -framerate 30 -i "$W/card-$fmt-intro.png" \
+    -loop 1 -t 2 -framerate 30 -i "$W/card-$fmt-intro.png" \
     -framerate 30 -i "$W/$dir/f%05d.jpg" \
-    -loop 1 -t 4 -framerate 30 -i "$W/card-$fmt-outro.png" \
-    -f lavfi -t 50 -i anullsrc=r=48000:cl=stereo \
+    -loop 1 -t 3 -framerate 30 -i "$W/card-$fmt-outro.png" \
+    -f lavfi -t 40 -i anullsrc=r=48000:cl=stereo \
     -filter_complex "
-      [0:v]scale=$ow:$oh:flags=lanczos,setsar=1,fps=30,format=yuv420p,fade=t=out:st=2.5:d=0.5[a];
-      [1:v]scale=$ow:$oh:flags=lanczos,setsar=1,fps=30,format=yuv420p${caps},fade=t=in:st=0:d=0.5,fade=t=out:st=42.5:d=0.5[b];
+      [0:v]scale=$ow:$oh:flags=lanczos,setsar=1,fps=30,format=yuv420p,fade=t=out:st=1.6:d=0.4[a];
+      [1:v]scale=$ow:$oh:flags=lanczos,setsar=1,fps=30,format=yuv420p${caps},fade=t=in:st=0:d=0.5,fade=t=out:st=23:d=0.5[b];
       [2:v]scale=$ow:$oh:flags=lanczos,setsar=1,fps=30,format=yuv420p,fade=t=in:st=0:d=0.5[c];
       [a][b][c]concat=n=3:v=1:a=0[v]" \
     -map "[v]" -map 3:a -shortest \

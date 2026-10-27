@@ -73,14 +73,14 @@ console.log({ landed: land.landed, crashed: land.crashed, td: lastL.touchdown?.t
 // ---- Edit: (sim-seconds from, to, video seconds). Camera key presses on segment starts. ----
 const a = releaseT;
 sample(trace, [
-  { from: a - 4, to: a, secs: 4 },                       // captive under the B-52 (chase)
-  { from: a, to: a + 9, secs: 6, keys: ['KeyC'] },        // drop + ignition from the cockpit
-  { from: a + 9, to: burnoutT, secs: 8, keys: ['KeyC', 'KeyC', 'KeyC'] }, // boost, chase cam, time-lapse
-  { from: burnoutT, to: apexT + 20, secs: 6 },           // coast over the top
-  { from: apexT + 20, to: endT, secs: 6, keys: ['KeyC'] }, // re-entry from the cockpit
+  { from: a - 1.5, to: a, secs: 1.5 },                                   // captive under the B-52 (chase)
+  { from: a, to: a + 8, secs: 4.5, keys: ['KeyC'] },                      // drop + ignition from the cockpit
+  { from: a + 8, to: burnoutT, secs: 5, keys: ['KeyC', 'KeyC', 'KeyC'] }, // boost, chase cam
+  { from: burnoutT, to: apexT + 15, secs: 4 },                            // coast over the top
+  { from: apexT + 15, to: endT, secs: 3.5, keys: ['KeyC'] },              // re-entry from the cockpit
 ]);
-sample(ltrace, [{ from: ltrace[0].t, to: lastL.t, secs: 12, keys: ['KeyC', 'KeyC', 'KeyC'] }]);
-for (let i = 0; i < 30; i++) frames.push({ tel: lastL, keys: [] }); // 1 s hold
+sample(ltrace, [{ from: ltrace[0].t, to: lastL.t, secs: 5, keys: ['KeyC', 'KeyC', 'KeyC'] }]);
+for (let i = 0; i < 15; i++) frames.push({ tel: lastL, keys: [] }); // 1 s hold
 
 writeFileSync(new URL('./frames.json', import.meta.url), JSON.stringify(frames));
 console.log('frames', frames.length, 'secs', frames.length / FPS);
