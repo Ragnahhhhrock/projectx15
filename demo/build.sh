@@ -20,7 +20,7 @@ build() { # fmt dir outW outH fontsize boxy
     -loop 1 -t 2 -framerate 30 -i "$W/card-$fmt-intro.png" \
     -framerate 30 -i "$W/$dir/f%05d.jpg" \
     -loop 1 -t 3 -framerate 30 -i "$W/card-$fmt-outro.png" \
-    -f lavfi -t 40 -i anullsrc=r=48000:cl=stereo \
+    -i "$W/music.wav" \
     -filter_complex "
       [0:v]scale=$ow:$oh:flags=lanczos,setsar=1,fps=30,format=yuv420p,fade=t=out:st=1.6:d=0.4[a];
       [1:v]scale=$ow:$oh:flags=lanczos,setsar=1,fps=30,format=yuv420p${caps},fade=t=in:st=0:d=0.5,fade=t=out:st=23:d=0.5[b];
