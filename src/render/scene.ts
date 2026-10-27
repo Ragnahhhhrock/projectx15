@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import type { Telemetry } from '../physics/sim';
 import { buildB52, buildX15, type X15Model } from './models';
 import { ViewControl } from './viewcontrol';
+import { FlightGuide } from './guide';
 
 export type CameraMode = 'chase' | 'cockpit' | 'side';
 export const CAMERA_MODES: CameraMode[] = ['chase', 'cockpit', 'side'];
@@ -40,6 +41,7 @@ export class SceneView {
   private fog: THREE.Fog;
   private _mode: CameraMode = 'chase';
   readonly look: ViewControl;
+  readonly guide = new FlightGuide();
 
   constructor(canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, logarithmicDepthBuffer: true });
@@ -55,7 +57,7 @@ export class SceneView {
 
     this.x15 = buildX15();
     this.scene.add(this.x15.group, this.world);
-    this.world.add(this.buildGround(), this.b52);
+    this.world.add(this.buildGround(), this.b52, this.guide.group);
     this.resize();
     window.addEventListener('resize', () => this.resize());
   }
@@ -170,6 +172,7 @@ export class SceneView {
     this.fog.near = 80000 + alt * 4;
     this.fog.far = 900000 + alt * 12;
 
+    this.guide.update(t.t);
     this.updateCamera(att, dt);
     this.renderer.render(this.scene, this.camera);
   }

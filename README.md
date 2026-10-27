@@ -17,6 +17,8 @@ A desktop browser flight simulator of the X-15 research flights: captive carry u
 - Aero coefficients by Mach in `src/data/x15-aero.json` — **approximate placeholders**, to be replaced with NASA data
 - Greybox X-15 and B-52, text HUD, chase / cockpit / side cameras
 
+Magenta guide boxes (toggle with G, switch profile with J) mark the ideal flight path; the next box is yellow. Paths are recorded from the autopilot profile flights (`npm run gen-profiles`).
+
 Headless tests check the M1 gate against real profiles: an altitude flight peaking at 320,000–380,000 ft (cf. flight 91, 354,200 ft) and a speed flight reaching Mach 5.2–6.5.
 
 ## Run it
@@ -40,6 +42,7 @@ npm run build    # production build in dist/
 | I / O | Ignite / shut down the XLR99 |
 | R / F | Reaction controls / stability augmentation on-off |
 | C | Camera: chase, cockpit, side |
+| G / J | Guide boxes on/off · switch guide profile (altitude / speed) |
 | T / P / N | Time scale, pause, new flight |
 | Gamepad | Sticks fly, triggers throttle, A ignite, Y release |
 
@@ -47,7 +50,7 @@ npm run build    # production build in dist/
 
 ```
 src/physics/   atmosphere, aircraft data, engine, 6-DOF sim, autopilot
-src/data/      aero coefficient tables (JSON)
+src/data/      aero coefficient tables, recorded guide profiles (JSON)
 src/worker/    fixed-step physics loop and message protocol
 src/render/    Three.js scene (floating origin) and greybox models
 src/input/     keyboard + Gamepad API

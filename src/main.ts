@@ -37,6 +37,8 @@ function frame(now: number): void {
   for (const action of ui) {
     if (action === 'camera') view.mode = CAMERA_MODES[(CAMERA_MODES.indexOf(view.mode) + 1) % CAMERA_MODES.length];
     if (action === 'resetView') view.look.reset();
+    if (action === 'guide') view.guide.toggle();
+    if (action === 'guideProfile') { view.guide.cycleProfile(); view.guide.on || view.guide.toggle(); }
     if (action === 'help') help.hidden = !help.hidden;
     if (action === 'pause') send({ type: 'command', command: paused ? 'resume' : 'pause' });
     if (action === 'timescale') send({ type: 'timescale', value: TIMESCALES[(TIMESCALES.indexOf(timescale) + 1) % TIMESCALES.length] });
@@ -44,7 +46,7 @@ function frame(now: number): void {
 
   if (latest) {
     view.update(latest, dt);
-    hud.update(latest, { paused, timescale, camera: view.look.active ? `${view.mode} free look` : view.mode });
+    hud.update(latest, { paused, timescale, camera: view.look.active ? `${view.mode} free look` : view.mode, guide: view.guide.on ? view.guide.profile : null });
   }
   requestAnimationFrame(frame);
 }
