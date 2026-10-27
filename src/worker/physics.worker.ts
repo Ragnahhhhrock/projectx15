@@ -1,10 +1,31 @@
 // Runs the simulation at a fixed 120 Hz, independent of the render frame rate.
 import { Sim } from '../physics/sim';
+import { qaxis } from '../physics/math';
+import { LAKE, LAKE_ELEV } from '../world/terrain';
 import type { FromWorker, ToWorker } from './protocol';
 
 const DT = 1 / 120;
 const MAX_STEPS_PER_TICK = 240;
 const POST_INTERVAL_MS = 16;
+
+/** Alternative starting points, selected with ?scenario=name (landing, landing-gear-up, highalt, dive). */
+function scenario(name: string): Sim {
+  const deg = Math.PI / 180;
+  const coast = (pos: [number, number, number], vel: [number, number, number], pitch: number, gear: boolean): Sim => {
+    const s = new Sim({ attached: false, gearDown: gear, position: pos, velocity: vel, attitude: qaxis([0, 0, 1], pitch * deg) });
+    s.engine.state = 'burnout';
+    s.s[13] = 60;
+    s.s[14] = 10;
+    return s;
+  };
+  switch (name) {
+    case 'landing': return coast([LAKE.x - 3000, LAKE_ELEV + 8, LAKE.z], [100, -1.2, 0], 8, true);
+    case 'landing-gear-up': return coast([LAKE.x - 3000, LAKE_ELEV + 8, LAKE.z], [100, -1.2, 0], 8, false);
+    case 'highalt': return coast([LAKE.x - 220000, 90000, LAKE.z + 4000], [1400, 0, 0], 2, false);
+    case 'dive': return coast([LAKE.x - 4000, LAKE_ELEV + 1500, LAKE.z], [250, -150, 0], -31, false);
+    default: return new Sim();
+  }
+}
 
 let sim = new Sim();
 let paused = false;
@@ -16,7 +37,10 @@ let lastPost = 0;
 self.onmessage = (e: MessageEvent<ToWorker>) => {
   const msg = e.data;
   if (msg.type === 'controls') sim.controls = msg.controls;
-  else if (msg.type === 'timescale') timescale = Math.max(0.25, Math.min(16, msg.value));
+  else if (msg.type === 'scenario') {
+    sim = scenario(msg.name);
+    acc = 0;
+  } else if (msg.type === 'timescale') timescale = Math.max(0.25, Math.min(16, msg.value));
   else {
     switch (msg.command) {
       case 'release':

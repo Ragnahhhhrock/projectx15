@@ -58,3 +58,7 @@ src/input/     keyboard + Gamepad API
 src/ui/        HUD
 tests/         unit tests and headless flight profiles
 ```
+
+## Practice scenarios
+
+Add `?scenario=landing`, `landing-gear-up`, `highalt` or `dive` to the URL to start somewhere other than the B-52. `M` mutes sound; `U` shows the text readout in the cockpit.
