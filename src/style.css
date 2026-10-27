@@ -63,6 +63,9 @@ html, body {
   font-size: var(--fs-sm);
   letter-spacing: 0.08em;
   white-space: pre;
+  max-width: calc(100vw - 2 * var(--space-4));
+  overflow: hidden;
+  text-overflow: ellipsis;
   pointer-events: none;
 }
 
@@ -213,3 +216,124 @@ html, body {
 .x-lamp--nominal { color: var(--x15-nominal); }
 .x-lamp--caution { color: var(--x15-caution); }
 .x-lamp--warning { color: var(--x15-warning); }
+
+/* ---- Primary flight data: speed and altitude, every view ------------ */
+#pfd {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 11;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+.pfd-cell {
+  min-width: clamp(170px, 17vw, 250px);
+  padding: 6px var(--space-4) 8px;
+  background: rgba(3, 5, 4, 0.78);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-panel);
+  text-align: right;
+}
+.pfd-cell:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+.pfd-cell:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+.pfd-label {
+  display: block;
+  text-align: left;
+  font: 600 var(--fs-micro) / 1.4 var(--font-display);
+  letter-spacing: var(--track-label);
+  color: var(--text-dim);
+}
+.pfd-main {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 6px;
+  line-height: 1;
+}
+.pfd-main b {
+  font: 600 clamp(30px, 3.4vw, 48px) / 1 var(--font-mono);
+  color: var(--data);
+  text-shadow: 0 0 10px rgba(155, 227, 138, 0.35), 0 1px 2px #000;
+}
+.pfd-main small { font: 500 var(--fs-base) / 1 var(--font-mono); color: var(--text-dim); }
+.pfd-trend { width: 1em; font-style: normal; font-size: var(--fs-base); color: var(--text); text-align: center; }
+.pfd-sub { margin-top: 4px; font: 500 var(--fs-md) / 1.1 var(--font-mono); color: var(--text); }
+.pfd-sub b { font-weight: 500; }
+.pfd-max { margin-top: 2px; font: 500 var(--fs-micro) / 1.4 var(--font-mono); letter-spacing: 0.06em; color: var(--text-dim); }
+
+/* ---- Highlights replay --------------------------------------------- */
+#replay { position: fixed; inset: 0; z-index: 12; pointer-events: none; }
+#replay[hidden] { display: none; }
+.rp-bar {
+  position: absolute;
+  left: 50%;
+  bottom: 52px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--space-4);
+  align-items: baseline;
+  padding: 6px 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.rp-bar b { font: 700 var(--fs-sm) / 1 var(--font-display); letter-spacing: var(--track-label); color: var(--action); }
+.rp-bar em { font-style: normal; font-size: var(--fs-xs); color: var(--text-dim); }
+.rp-track {
+  position: absolute;
+  left: 10vw;
+  right: 10vw;
+  bottom: 28px;
+  height: 12px;
+  pointer-events: auto;
+}
+.rp-seg {
+  position: absolute;
+  top: 3px;
+  height: 6px;
+  background: rgba(155, 227, 138, 0.25);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.rp-seg:hover { background: rgba(155, 227, 138, 0.45); }
+.rp-seg i { position: absolute; top: -3px; width: 2px; height: 12px; margin-left: -1px; background: var(--data); }
+.rp-head {
+  position: absolute;
+  top: -2px;
+  width: 4px;
+  height: 16px;
+  margin-left: -2px;
+  background: var(--action);
+  box-shadow: var(--glow-action);
+  z-index: 1;
+}
+.rp-card {
+  position: absolute;
+  left: 50%;
+  bottom: 22vh;
+  transform: translateX(-50%);
+  padding: var(--space-3) var(--space-6);
+  background: rgba(3, 5, 4, 0.8);
+  border-left: 3px solid var(--action);
+  text-align: center;
+}
+.rp-card[hidden] { display: none; }
+.rp-card.rp-in { animation: rp-in var(--dur-slow) var(--ease-out); }
+.rp-title {
+  font: 700 var(--fs-2xl) / var(--lh-tight) var(--font-display);
+  letter-spacing: var(--track-display);
+  text-transform: uppercase;
+  color: var(--text);
+}
+.rp-detail { margin-top: 6px; font: 600 var(--fs-md) / 1.2 var(--font-mono); color: var(--data); font-variant-numeric: tabular-nums; }
+@keyframes rp-in { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+/* Replay frames the view in XLR99 orange so it is never mistaken for live flight */
+body.replaying #view { outline: 3px solid var(--action); outline-offset: -3px; }
+body.replaying #help, body.replaying #coach { display: none; }

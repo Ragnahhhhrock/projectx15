@@ -1,8 +1,11 @@
 import { Input } from './input/input';
-import { CAMERA_MODES, SceneView } from './render/scene';
+import { CAMERA_LABEL, CAMERA_MODES, SceneView, isEyeView } from './render/scene';
 import { Hud } from './ui/hud';
 import { GVision } from './ui/gvision';
 import { Coach } from './ui/coach';
+import { Pfd } from './ui/pfd';
+import { FlightRecorder } from './replay/recorder';
+import { ReplayPlayer } from './replay/player';
 import { AudioEngine } from './audio/audio';
 import type { FromWorker, ToWorker } from './worker/protocol';
 import type { Telemetry } from './physics/sim';
@@ -22,6 +25,11 @@ const coach = new Coach(document.getElementById('coach')!);
 const audio = new AudioEngine();
 const hudEl = document.getElementById('hud')!;
 let hudForced = false;
+const pfd = new Pfd(document.getElementById('pfd')!);
+const recorder = new FlightRecorder();
+const replay = new ReplayPlayer(recorder, document.getElementById('replay')!);
+/** Whether the sim was running when the replay started, so it resumes afterwards */
+let resumeAfterReplay = false;
 
 const worker = new Worker(new URL('./worker/physics.worker.ts', import.meta.url), { type: 'module' });
 const send = (msg: ToWorker) => worker.postMessage(msg);
@@ -39,9 +47,23 @@ let timescale = 1;
 worker.onmessage = (e: MessageEvent<FromWorker>) => {
   latest = e.data.telemetry;
   analytics.update(latest);
+  if (!e.data.paused) recorder.push(latest);
   paused = e.data.paused;
   timescale = e.data.timescale;
 };
+
+function startReplay(): void {
+  if (!replay.start()) return;
+  resumeAfterReplay = !paused;
+  if (!paused) send({ type: 'command', command: 'pause' });
+  track('replay_start', { highlights: replay.available });
+}
+
+function endReplay(): void {
+  replay.stop();
+  if (resumeAfterReplay) send({ type: 'command', command: 'resume' });
+  resumeAfterReplay = false;
+}
 
 let last = performance.now();
 function frame(now: number): void {
@@ -49,10 +71,21 @@ function frame(now: number): void {
   last = now;
 
   const controls = input.poll(dt);
-  view.controls = controls;
-  send({ type: 'controls', controls });
   const { commands, ui } = input.drainActions();
-  for (const command of commands) send({ type: 'command', command });
+
+  if (replay.active) {
+    // Flight inputs are ignored during replay; N still starts a new flight.
+    view.controls = null;
+    if (commands.includes('reset')) {
+      endReplay();
+      send({ type: 'command', command: 'reset' });
+    }
+  } else {
+    view.controls = controls;
+    send({ type: 'controls', controls });
+    for (const command of commands) send({ type: 'command', command });
+  }
+
   for (const action of ui) {
     if (action === 'camera') {
       view.mode = CAMERA_MODES[(CAMERA_MODES.indexOf(view.mode) + 1) % CAMERA_MODES.length];
@@ -65,18 +98,36 @@ function frame(now: number): void {
     if (action === 'mute') audio.toggleMute();
     if (action === 'hud') hudForced = !hudForced;
     if (action === 'coach') coach.toggle();
+    if (action === 'replay') (replay.active ? endReplay() : startReplay());
+    if (replay.active) {
+      if (action === 'replayNext') replay.next();
+      if (action === 'replayPrev') replay.prev();
+      if (action === 'pause') replay.togglePause();
+      if (action === 'timescale') replay.cycleSpeed();
+      continue;
+    }
     if (action === 'pause') send({ type: 'command', command: paused ? 'resume' : 'pause' });
     if (action === 'timescale') send({ type: 'timescale', value: TIMESCALES[(TIMESCALES.indexOf(timescale) + 1) % TIMESCALES.length] });
   }
 
-  if (latest) {
-    view.update(latest, dt);
+  let shown = latest;
+  if (replay.active) {
+    shown = replay.update(dt);
+    if (!replay.active) endReplay(); // reel finished
+    shown ??= latest;
+  }
+
+  if (shown) {
+    view.update(shown, dt);
     coach.setProfile(view.guide.profile);
-    coach.update(latest, now);
-    gvision.update(latest.nz, latest.t);
-    audio.update(latest, dt, view.mode === 'cockpit', view.b52Distance);
+    if (!replay.active) coach.update(shown, now);
+    gvision.update(shown.nz, shown.t);
+    audio.update(shown, dt, isEyeView(view.mode), view.b52Distance);
     hudEl.style.display = view.mode === 'cockpit' && !hudForced ? 'none' : '';
-    hud.update(latest, { paused, timescale, muted: audio.isMuted, camera: view.look.active ? `${view.mode} free look` : view.mode, guide: view.guide.on ? view.guide.profile : null, gwarn: gvision.label });
+    pfd.update(shown);
+    document.body.classList.toggle('replaying', replay.active);
+    const camera = `${CAMERA_LABEL[view.mode]}${view.look.active ? ' free look' : ''}`;
+    hud.update(shown, { paused: paused && !replay.active, timescale: replay.active ? 1 : timescale, muted: audio.isMuted, camera, guide: view.guide.on ? view.guide.profile : null, gwarn: gvision.label, replay: replay.active, highlights: replay.active ? 0 : replay.available });
   }
   requestAnimationFrame(frame);
 }

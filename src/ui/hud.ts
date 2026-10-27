@@ -26,7 +26,7 @@ export class Hud {
     this.status = status;
   }
 
-  update(t: Telemetry, extra: { paused: boolean; timescale: number; muted: boolean; camera: string; guide: string | null; gwarn?: string | null }): void {
+  update(t: Telemetry, extra: { paused: boolean; timescale: number; muted: boolean; camera: string; guide: string | null; gwarn?: string | null; replay?: boolean; highlights?: number }): void {
     const rows: [string, string][] = [
       ['MACH', fmt(t.mach, 2)],
       ['ALT', `${fmt(t.altitude * FT)} ft`],
@@ -49,6 +49,8 @@ export class Hud {
     ];
     this.el.innerHTML = rows.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('');
     const flags = [extra.gwarn ?? '', extra.paused ? 'PAUSED' : '', extra.muted ? 'MUTED' : '', extra.timescale !== 1 ? `${extra.timescale}×` : '', extra.camera.toUpperCase(), extra.guide ? `GUIDE ${extra.guide.toUpperCase()}` : ''].filter(Boolean);
-    this.status.textContent = `${phaseLabel(t)}   ${flags.join(' · ')}`;
+    const ended = t.landed || t.crashed;
+    if (!extra.replay && ended && extra.highlights) flags.unshift(`Y — REPLAY ${extra.highlights} HIGHLIGHTS`);
+    this.status.textContent = `${extra.replay ? 'REPLAY' : phaseLabel(t)}   ${flags.join(' · ')}`;
   }
 }

@@ -12,14 +12,18 @@ import { Cockpit, EYE } from './cockpit';
 import { Effects } from './effects';
 import { terrainHeight } from '../world/terrain';
 
-export type CameraMode = 'chase' | 'cockpit' | 'side';
-export const CAMERA_MODES: CameraMode[] = ['chase', 'cockpit', 'side'];
+/** 'pilot' is the cockpit eye point with no airframe or cockpit drawn: a clear view out. */
+export type CameraMode = 'chase' | 'cockpit' | 'pilot' | 'side';
+export const CAMERA_MODES: CameraMode[] = ['chase', 'cockpit', 'pilot', 'side'];
+export const CAMERA_LABEL: Record<CameraMode, string> = { chase: 'chase', cockpit: 'cockpit', pilot: 'pilot view', side: 'side' };
+/** Camera modes that sit at the pilot's eye point. */
+export const isEyeView = (m: CameraMode) => m === 'cockpit' || m === 'pilot';
 
 /** B-52 offset from the X-15 in its body frame while captive (X-15 hangs under the right wing). */
 const B52_OFFSET = new THREE.Vector3(-X15_ON_B52[0], -X15_ON_B52[1], -X15_ON_B52[2]);
 
 /** Base external camera offsets in the X-15 body frame (x forward, y up, z right). */
-const EXTERNAL_OFFSETS: Record<Exclude<CameraMode, 'cockpit'>, THREE.Vector3> = {
+const EXTERNAL_OFFSETS: Record<'chase' | 'side', THREE.Vector3> = {
   chase: new THREE.Vector3(-30, 6, 0),
   side: new THREE.Vector3(-4, 3, 28),
 };
@@ -54,6 +58,8 @@ export class SceneView {
   b52Distance = 0;
   private wall = 0;
   private wreckAngle = 0;
+  /** X-15 parts with no per-frame visibility of their own (wings, tail, engine bell…) */
+  private airframe: THREE.Object3D[];
   private _mode: CameraMode = 'chase';
   readonly look: ViewControl;
   readonly guide = new FlightGuide();
@@ -72,6 +78,7 @@ export class SceneView {
     this.scene.add(this.sun, this.hemi, this.sky.mesh);
 
     this.x15 = buildX15();
+    this.airframe = this.x15.group.children.filter((c) => c !== this.x15.exterior && c !== this.x15.flame && c !== this.x15.gear && c !== this.x15.ventral);
     this.x15.group.add(this.cockpit.group);
     this.scene.add(this.x15.group, this.world);
     this.world.add(this.terrain.group, this.ground.group, this.vegetation.group, this.effects.group, this.b52, this.guide.group);
@@ -131,6 +138,10 @@ export class SceneView {
     this.x15.gear.visible = t.gearDown;
     this.x15.ventral.visible = t.ventralAttached;
     this.x15.group.visible = !t.crashed;
+    // Pilot view: nothing of the aircraft is drawn
+    const clear = this._mode === 'pilot' && !t.crashed;
+    for (const part of this.airframe) part.visible = !clear;
+    if (clear) this.x15.exterior.visible = this.x15.gear.visible = this.x15.ventral.visible = this.x15.flame.visible = false;
     this.wall += dt;
     this.cockpit.update(t, this.controls, dt, this.wall);
     this.effects.update(dt, t, att, this.x15);
@@ -177,7 +188,7 @@ export class SceneView {
       cam.updateProjectionMatrix();
       return;
     }
-    if (this._mode === 'cockpit') {
+    if (isEyeView(this._mode)) {
       // Head turns freely through 360°; pan leans the head a little; zoom narrows the FOV.
       const q = SceneView.orient(-look.yaw, -look.pitch + COCKPIT_PITCH);
       const lean = new THREE.Vector3(
@@ -190,7 +201,7 @@ export class SceneView {
       cam.fov = THREE.MathUtils.clamp(75 * look.zoom, 12, 110);
     } else {
       this.camQuat.slerp(att, Math.min(1, dt * 3));
-      const base = EXTERNAL_OFFSETS[this._mode];
+      const base = EXTERNAL_OFFSETS[this._mode as 'chase' | 'side'];
       const az = Math.atan2(base.z, -base.x) + look.yaw;
       const el = Math.atan2(base.y, Math.hypot(base.x, base.z)) + look.pitch;
       const q = SceneView.orient(az, el);

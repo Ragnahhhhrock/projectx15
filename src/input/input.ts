@@ -2,7 +2,7 @@
 import type { Controls } from '../physics/sim';
 import type { Command } from '../worker/protocol';
 
-export type UiAction = 'camera' | 'help' | 'pause' | 'timescale' | 'resetView' | 'guide' | 'guideProfile' | 'mute' | 'hud' | 'coach';
+export type UiAction = 'camera' | 'help' | 'pause' | 'timescale' | 'resetView' | 'guide' | 'guideProfile' | 'mute' | 'hud' | 'coach' | 'replay' | 'replayNext' | 'replayPrev';
 
 const RAMP = 2.5; // per second towards full deflection
 const RETURN = 5; // per second back to centre
@@ -31,6 +31,9 @@ const UI_KEYS: Record<string, UiAction> = {
   KeyM: 'mute',
   KeyU: 'hud',
   KeyB: 'coach',
+  KeyY: 'replay',
+  BracketRight: 'replayNext',
+  BracketLeft: 'replayPrev',
 };
 
 // Standard-mapping gamepad buttons
