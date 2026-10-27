@@ -48,6 +48,21 @@ npx wrangler d1 execute projectx15-stats --remote --file migrations/0001_stats.s
 ```
 
 Then in the Cloudflare dashboard: Pages project → Settings → Bindings → add a D1 binding named `DB` pointing at `projectx15-stats`, and redeploy. Until then the panel shows "Loading flight totals…".
+## Scoring and leaderboard
+
+Every flight is graded out of 1,000 when it ends (`src/scoring/score.ts`), and the score screen shows the breakdown and letter grade (S ≥ 900, A ≥ 800, B ≥ 650, C ≥ 500, D ≥ 300, F):
+
+| Part | Max | How |
+| --- | --- | --- |
+| Performance | 350 | Best of peak altitude vs 354,200 ft or peak Mach vs 6.04 |
+| Records matched | 100 | 50 per X-15 record matched |
+| Profile tracking | 200 | RMS distance from the closer guide-box profile (0 km = full, 20 km = none) |
+| G limits | 50 | Full to 5 g, zero at 8 g |
+| Landing | 300 | 120 for landing intact + sink rate, touchdown speed (~195 kt) and landing on the lakebed. Belly landing: 40. |
+
+A crash halves the total. The homepage shows the top 10 pilots; name entry is on the same screen. Practice scenarios are graded but not ranked.
+
+The global board is `functions/api/leaderboard.ts` (Cloudflare Pages Function). **One-time setup:** create a KV namespace and bind it to the Pages project as `LEADERBOARD`. The server recomputes each score from the submitted flight stats and rejects impossible values, but stats come from the browser, so treat it as a casual board, not tamper-proof. Without the binding (or on `npm run dev`) scores fall back to this browser's localStorage.
 
 ## Run it
 

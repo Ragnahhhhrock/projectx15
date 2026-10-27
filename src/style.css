@@ -31,6 +31,8 @@ html, body {
 }
 #gvision[hidden] { display: none; }
 #hud, #status, #help, #coach, #corner { z-index: 10; }
+#score { z-index: 13; }
+#home { z-index: 20; }
 
 /* ---- HUD ------------------------------------------------------------- */
 #hud {
@@ -398,3 +400,73 @@ body.replaying #corner { display: none; }
 }
 #coffee:hover { background: var(--surface-2); }
 body.replaying #coffee { display: none; }
+body.replaying #records { display: none; }
+
+/* ---- Homepage and score screen ------------------------------------- */
+#home {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  overflow-y: auto;
+  background: radial-gradient(ellipse at 50% 30%, rgba(12, 23, 38, 0.95), rgba(5, 7, 10, 0.985));
+  font-family: var(--font-body);
+}
+#home[hidden], #score[hidden] { display: none; }
+.home-card { width: min(560px, 100%); display: grid; gap: var(--space-3); }
+.home-card h1 { margin: 0; font-size: var(--fs-3xl); color: var(--text); }
+.home-card h2 { margin: var(--space-2) 0 0; }
+.home-sub { margin: 0; color: var(--text-dim); font-size: 14px; line-height: 1.5; }
+.home-form { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-2); }
+.home-form input {
+  flex: 1 1 140px;
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font: 500 var(--fs-base) var(--font-mono);
+  text-transform: uppercase;
+}
+.x-btn .k { font: 500 var(--fs-micro) / 1 var(--font-mono); opacity: 0.7; }
+
+#score {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  overflow-y: auto;
+  pointer-events: none;
+  font-family: var(--font-body);
+}
+.sc-card { width: min(460px, 100%); display: grid; gap: var(--space-3); background: rgba(5, 7, 10, 0.95); pointer-events: auto; border-left: 4px solid var(--action); }
+.sc-card h2 { margin: var(--space-2) 0 0; }
+.sc-head { display: flex; align-items: baseline; gap: var(--space-5); }
+.sc-grade { font: 700 var(--fs-hero) / 0.9 var(--font-display); }
+.sc-total { font-size: var(--fs-2xl); }
+.sc-total small { font-size: var(--fs-base); color: var(--text-dim); }
+.sc-rank { margin: 0; color: var(--action); font-weight: 600; font-size: var(--fs-sm); }
+.sc-parts { border-collapse: collapse; width: 100%; font-size: var(--fs-sm); }
+.sc-parts td { padding: 5px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+.sc-parts td:last-child { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sc-parts td:last-child b { color: var(--data); font-weight: 500; }
+.sc-parts td:last-child span { color: var(--text-dim); }
+.sc-parts small { display: block; color: var(--text-dim); font-size: var(--fs-xs); }
+.sc-parts .pen b { color: var(--x15-warning); }
+.sc-actions { display: flex; gap: var(--space-2); }
+.sc-actions .x-btn { flex: 1 1 auto; justify-content: space-between; }
+body.replaying #score, body.replaying #home { display: none; }
+body.scored #coach, body.scored #help { display: none; }
+
+.lb { border-collapse: collapse; width: 100%; font-size: var(--fs-sm); font-variant-numeric: tabular-nums; }
+.lb th { text-align: left; font: 600 var(--fs-micro) var(--font-display); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text-dim); padding: 4px 6px; }
+.lb td { padding: 4px 6px; border-top: 1px solid var(--border); font-family: var(--font-mono); }
+.lb td:nth-child(2) { font-family: var(--font-body); color: var(--text); }
+.lb td:nth-child(n+4), .lb th:nth-child(n+4) { text-align: right; }
+.lb tr.me td { background: rgba(255, 106, 26, 0.16); }
+.lb-empty, .lb-src { margin: 0; color: var(--text-dim); font-size: var(--fs-xs); }
+.g-S { color: var(--x15-xlr99-hot); } .g-A { color: var(--data); } .g-B { color: var(--x15-limb); }
+.g-C { color: var(--x15-caution); } .g-D { color: var(--text-dim); } .g-F { color: var(--x15-warning); }

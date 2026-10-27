@@ -316,7 +316,7 @@ export class Coach {
       this.setOn(false);
     });
     window.addEventListener('keydown', (e) => {
-      if (!this.visible || e.code !== 'Enter' || (e.target as HTMLElement)?.tagName === 'BUTTON') return;
+      if (!this.visible || e.code !== 'Enter' || ['BUTTON', 'INPUT'].includes((e.target as HTMLElement)?.tagName)) return;
       const s = this.step;
       if (s.manual) this.go(this.i + 1);
       else if (s.final) this.onNewFlight();

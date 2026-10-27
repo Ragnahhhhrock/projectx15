@@ -49,7 +49,7 @@ export class Input {
 
   constructor(target: Window = window) {
     target.addEventListener('keydown', (e) => {
-      if (e.repeat) return;
+      if (e.repeat || (e.target as HTMLElement | null)?.tagName === 'INPUT') return; // typing a name
       this.keys.add(e.code);
       const action = COMMAND_KEYS[e.code] ?? UI_KEYS[e.code];
       if (action) {

@@ -8,6 +8,8 @@ import { FlightRecorder } from './replay/recorder';
 import { ReplayPlayer } from './replay/player';
 import { Records } from './ui/records';
 import { FlightStats } from './ui/stats';
+import { HomeScreen, ScoreScreen } from './ui/scoreboard';
+import { FlightTracker } from './scoring/tracker';
 import { AudioEngine } from './audio/audio';
 import type { FromWorker, ToWorker } from './worker/protocol';
 import type { Telemetry } from './physics/sim';
@@ -48,6 +50,17 @@ if (params.has('scenario')) send({ type: 'scenario', name: params.get('scenario'
 const analytics = new FlightAnalytics(params.get('scenario'));
 const stats = new FlightStats(document.getElementById('stats')!);
 const records = new Records(document.getElementById('records')!, !params.has('scenario'));
+const tracker = new FlightTracker();
+const scoreScreen = new ScoreScreen(document.getElementById('score')!);
+scoreScreen.ranked = !params.has('scenario');
+scoreScreen.onNewFlight = () => send({ type: 'command', command: 'reset' });
+const home = new HomeScreen(document.getElementById('home')!);
+if (params.has('scenario')) home.hide();
+else {
+  send({ type: 'command', command: 'pause' });
+  home.onStart = () => send({ type: 'command', command: 'resume' });
+  document.getElementById('homeName')?.focus();
+}
 if (params.has('debug')) (window as unknown as { __x15: unknown }).__x15 = { view, send };
 
 let latest: Telemetry | null = null;
@@ -58,6 +71,9 @@ worker.onmessage = (e: MessageEvent<FromWorker>) => {
   latest = e.data.telemetry;
   analytics.update(latest);
   stats.update(latest);
+  const finished = tracker.update(latest);
+  if (finished) void scoreScreen.show(finished);
+  else if (scoreScreen.visible && !latest.landed && !latest.crashed) scoreScreen.hide();
   if (!e.data.paused) recorder.push(latest);
   paused = e.data.paused;
   timescale = e.data.timescale;
@@ -82,7 +98,9 @@ function frame(now: number): void {
   last = now;
 
   const controls = input.poll(dt);
-  const { commands, ui } = input.drainActions();
+  const drained = input.drainActions();
+  const commands = home.visible ? [] : drained.commands;
+  const ui = home.visible ? [] : drained.ui;
 
   if (replay.active) {
     // Flight inputs are ignored during replay; N still starts a new flight.
@@ -92,8 +110,8 @@ function frame(now: number): void {
       send({ type: 'command', command: 'reset' });
     }
   } else {
-    view.controls = controls;
-    send({ type: 'controls', controls });
+    view.controls = home.visible ? null : controls;
+    send({ type: 'controls', controls: home.visible ? { pitch: 0, roll: 0, yaw: 0, throttle: controls.throttle } : controls });
     for (const command of commands) send({ type: 'command', command });
   }
 
