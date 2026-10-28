@@ -26,6 +26,7 @@ export class HomeScreen {
           <input id="homeName" maxlength="16" autocomplete="nickname" spellcheck="false" placeholder="PILOT" value="${esc(savedName())}" />
           <button class="x-btn x-btn--primary" type="submit">Fly <span class="k">ENTER</span></button>
         </form>
+        <p class="home-credit">Another <a href="https://malgordon.com" target="_blank" rel="noopener">Mal Gordon</a> creation</p>
       </div>`;
     this.q('homeForm').addEventListener('submit', (e) => { e.preventDefault(); this.start(); });
     void fetchBoard().then((b) => { this.q('homeBoard').innerHTML = renderBoard(b); });
