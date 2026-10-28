@@ -403,6 +403,24 @@ body.replaying #corner { display: none; }
 body.replaying #coffee { display: none; }
 body.replaying #records { display: none; }
 
+/* ---- Hide-displays toggle (works on touch, where there is no keyboard) -- */
+#uiToggle {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-4);
+  transform: translateX(-50%);
+  z-index: 14;
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  background: var(--panel);
+  font-size: var(--fs-micro);
+  white-space: nowrap;
+}
+body.ui-hidden #uiToggle { opacity: 0.45; }
+body.ui-hidden #hud, body.ui-hidden #status, body.ui-hidden #help, body.ui-hidden #coach,
+body.ui-hidden #corner, body.ui-hidden #coffee, body.ui-hidden #pfd { display: none !important; }
+body.on-home #uiToggle, body.replaying #uiToggle, body.scored #uiToggle { display: none; }
+
 /* ---- Homepage and score screen ------------------------------------- */
 #home {
   position: fixed;

@@ -28,6 +28,21 @@ document.getElementById('sitenav')?.addEventListener('click', (e) => {
   if (link) track('history_menu_click', { page: new URL(link.href).pathname });
 });
 
+const uiToggle = document.getElementById('uiToggle');
+function setDisplaysHidden(hidden: boolean): void {
+  document.body.classList.toggle('ui-hidden', hidden);
+  if (!uiToggle) return;
+  uiToggle.textContent = hidden ? 'Show displays' : 'Hide displays';
+  uiToggle.setAttribute('aria-pressed', String(hidden));
+  uiToggle.setAttribute('aria-label', hidden ? 'Show on-screen displays' : 'Hide on-screen displays');
+  try { localStorage.setItem('x15.displaysHidden', hidden ? '1' : '0'); } catch { /* storage unavailable */ }
+}
+try { setDisplaysHidden(localStorage.getItem('x15.displaysHidden') === '1'); } catch { /* storage unavailable */ }
+uiToggle?.addEventListener('click', () => {
+  setDisplaysHidden(!document.body.classList.contains('ui-hidden'));
+  uiToggle.blur(); // keep flight keys going to the sim
+});
+
 const TIMESCALES = [1, 2, 4, 8];
 
 const canvas = document.getElementById('view') as HTMLCanvasElement;
