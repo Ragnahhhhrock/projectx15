@@ -231,7 +231,7 @@ ${expand(page.body.trim())}
       <nav aria-label="X-15 history, footer">
         ${footerLinks}
       </nav>
-      <p>Project X-15 is an independent flight simulator. It is not affiliated with or endorsed by NASA, the US Air Force or the US Navy. Questions: <a href="mailto:contact@projectx15.com">contact@projectx15.com</a></p>
+      <p>Project X-15 is an independent flight simulator. It is not affiliated with or endorsed by NASA, the US Air Force or the US Navy. </p>
       <p class="site-credit">Another <a href="https://malgordon.com" target="_blank" rel="noopener">Mal Gordon</a> creation</p>
     </footer>
 
